@@ -46,7 +46,7 @@ namespace Proyecto2__Tron
                     panel.BackColor = Color.LightGreen;  // Establecer el color de fondo
 
                     // Establecer la imagen de fondo
-                    panel.BackgroundImage = Image.FromFile("C:\\Users\\Pablo\\OneDrive - Estudiantes ITCR\\TEC\\Semestre 2\\00 Datos\\TRON\\TRON\\TRON\\Resources\\celda.jpg");  // Reemplaza con la ruta de tu imagen
+                    panel.BackgroundImage = Image.FromFile("C:\\Users\\Pablo\\OneDrive - Estudiantes ITCR\\TEC\\Semestre 2\\00 Datos\\P2\\Proyecto2- Tron\\Resources\\celda.jpg");  // Reemplaza con la ruta de tu imagen
                     panel.BackgroundImageLayout = ImageLayout.Stretch;
 
                     // Guardar el panel en la matriz

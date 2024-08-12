@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Proyecto2__Tron
 {
@@ -25,34 +21,69 @@ namespace Proyecto2__Tron
 
     public class Grid
     {
-        public Casilla[,] Malla { get; private set; }
+        public Casilla PrimerCasilla { get; private set; }
 
         public Grid(int filas, int columnas)
         {
-            Malla = new Casilla[filas, columnas];
+            // Crear la primera casilla
+            PrimerCasilla = new Casilla(0, 0);
 
-            // Crear cada casilla en la malla
+            Casilla actual = PrimerCasilla;
+
+            // Crear el grid usando listas enlazadas
             for (int i = 0; i < filas; i++)
             {
-                for (int j = 0; j < columnas; j++)
+                Casilla filaActual = actual;
+
+                for (int j = 1; j < columnas; j++)
                 {
-                    Malla[i, j] = new Casilla(i, j);
+                    Casilla nueva = new Casilla(i, j);
+                    actual.Derecha = nueva;
+                    nueva.Izquierda = actual;
+                    actual = nueva;
                 }
-            }
 
-            // Conectar las casillas entre sí
-            for (int i = 0; i < filas; i++)
-            {
-                for (int j = 0; j < columnas; j++)
+                // Si no es la última fila, conectamos la fila actual con la fila de abajo
+                if (i < filas - 1)
                 {
-                    if (i > 0) Malla[i, j].Arriba = Malla[i - 1, j];    // Conectar con la casilla de arriba
-                    if (i < filas - 1) Malla[i, j].Abajo = Malla[i + 1, j];  // Conectar con la casilla de abajo
-                    if (j > 0) Malla[i, j].Izquierda = Malla[i, j - 1]; // Conectar con la casilla a la izquierda
-                    if (j < columnas - 1) Malla[i, j].Derecha = Malla[i, j + 1]; // Conectar con la casilla a la derecha
+                    Casilla nuevaFila = new Casilla(i + 1, 0);
+                    filaActual.Abajo = nuevaFila;
+                    nuevaFila.Arriba = filaActual;
+                    actual = nuevaFila;
+
+                    Casilla nodoAnterior = filaActual;
+                    Casilla nodoActual = nuevaFila;
+
+                    // Conectar las casillas de la nueva fila con las de la fila anterior
+                    for (int j = 1; j < columnas; j++)
+                    {
+                        nodoAnterior = nodoAnterior.Derecha;
+                        Casilla nuevoNodo = new Casilla(i + 1, j);
+                        nodoActual.Derecha = nuevoNodo;
+                        nuevoNodo.Izquierda = nodoActual;
+                        nodoAnterior.Abajo = nuevoNodo;
+                        nuevoNodo.Arriba = nodoAnterior;
+                        nodoActual = nuevoNodo;
+                    }
                 }
             }
         }
+
+        public Casilla ObtenerCasilla(int x, int y)
+        {
+            Casilla actual = PrimerCasilla;
+
+            while (actual != null && actual.X != x)
+            {
+                actual = actual.Abajo;
+            }
+
+            while (actual != null && actual.Y != y)
+            {
+                actual = actual.Derecha;
+            }
+
+            return actual;
+        }
     }
-
-
 }

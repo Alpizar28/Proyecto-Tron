@@ -51,5 +51,10 @@ namespace Proyecto2__Tron
 
             MessageBox.Show($"Grid de {filas}x{columnas} creado visualmente");
         }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
