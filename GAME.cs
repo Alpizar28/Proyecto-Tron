@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
-
 namespace Proyecto2
 {
     public partial class GAME : Form
@@ -56,9 +55,16 @@ namespace Proyecto2
                     panel.BackColor = Color.LightGreen;  // Establecer el color de fondo
 
                     // Establecer la imagen de fondo
-                    panel.BackgroundImage = Image.FromFile("C:\\Users\\Pablo\\OneDrive - Estudiantes ITCR\\TEC\\Semestre 2\\00 Datos\\P2\\Proyecto2\\Resources\\celda.jpg");  // Reemplaza con la ruta de tu imagen
-                    panel.BackgroundImageLayout = ImageLayout.Stretch;
-
+                    /*try
+                    {
+                        panel.BackgroundImage = Image.FromFile("C:\\Users\\Pablo\\OneDrive - Estudiantes ITCR\\TEC\\Semestre 2\\00 Datos\\P2\\Proyecto2\\Resources\\celda.jpg");
+                        panel.BackgroundImageLayout = ImageLayout.Stretch;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al cargar la imagen: {ex.Message}");
+                    }
+                    */
                     // Guardar el panel en la matriz
                     gridPanels[i, j] = panel;
 
@@ -66,15 +72,26 @@ namespace Proyecto2
                     this.Controls.Add(panel);
                 }
             }
+
+            // Forzar la actualización de la interfaz
+            this.Invalidate();
         }
 
         private void InicializarMoto()
         {
-            // Inicializa la moto en la posición (0, 0)
-            Casilla posicionInicial = grid.ObtenerCasilla(0, 0);  // Usar el método ObtenerCasilla del grid
-            moto = new MOTO(10, 3, 100, new List<string>(), new List<string>(), posicionInicial);
-            ActualizarPosicionMoto();
+            // Asegúrate de que la casilla inicial (0, 0) existe en el grid
+            Casilla posicionInicial = grid.ObtenerCasilla(0, 0);
+            if (posicionInicial != null)
+            {
+                moto = new MOTO(10, 3, 100, new List<string>(), new List<string>(), posicionInicial);
+                ActualizarPosicionMoto();
+            }
+            else
+            {
+                MessageBox.Show("Error: No se pudo obtener la posición inicial para la moto.");
+            }
         }
+
 
         private void ActualizarPosicionMoto()
         {
@@ -87,8 +104,18 @@ namespace Proyecto2
             // Colorea la nueva posición de la moto
             int x = moto.PosicionActual.X;
             int y = moto.PosicionActual.Y;
-            gridPanels[x, y].BackColor = Color.Red;
+
+            // Verifica que las coordenadas estén dentro de los límites del grid
+            if (x >= 0 && x < filas && y >= 0 && y < columnas)
+            {
+                gridPanels[x, y].BackColor = Color.Red;
+            }
+            else
+            {
+                MessageBox.Show($"Error: La posición de la moto ({x}, {y}) está fuera de los límites del grid.");
+            }
         }
+
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -124,4 +151,6 @@ namespace Proyecto2
 
         }
     }
+
+
 }

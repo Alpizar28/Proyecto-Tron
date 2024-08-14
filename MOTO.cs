@@ -24,11 +24,13 @@ namespace Proyecto2
 
         public void Mover(Casilla nuevaPosicion)
         {
-            if (Combustible > 0)
+            if (Combustible > 0 && nuevaPosicion != null)
             {
                 PosicionActual = nuevaPosicion;
                 Combustible -= 1;
+                Console.WriteLine($"Moto movida a posición ({PosicionActual.X}, {PosicionActual.Y})");
             }
         }
+
     }
 }
