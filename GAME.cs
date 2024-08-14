@@ -1,25 +1,34 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Proyecto2__Tron;
 
 namespace Proyecto2__Tron
 {
     public partial class GAME : Form
     {
+        private MOTO moto;  // Declarar la variable moto
         private int cellSize = 20;  // Tamaño de cada celda en píxeles
         private Panel[,] gridPanels;  // Matriz de Paneles que representarán el grid
         private int columnas;
         private int filas;
+        private Grid grid;  // Declarar la variable grid
 
         public GAME(int columnas, int filas)
         {
             InitializeComponent();
             this.Size = new Size(1050, 750);  // Ajusta el tamaño de la ventana del juego
+            this.columnas = columnas;
+            this.filas = filas;
             CrearGrid(columnas, filas);  // Crear el grid en esta ventana
+            InicializarMoto();
         }
 
         private void CrearGrid(int columnas, int filas)
         {
+            // Inicializar el grid lógico
+            grid = new Grid(filas, columnas);
+
             // Tamaño total del grid
             int gridWidth = columnas * cellSize;
             int gridHeight = filas * cellSize;
@@ -58,6 +67,56 @@ namespace Proyecto2__Tron
             }
         }
 
+        private void InicializarMoto()
+        {
+            // Inicializa la moto en la posición (0, 0)
+            Casilla posicionInicial = grid.ObtenerCasilla(0, 0);  // Usar el método ObtenerCasilla del grid
+            moto = new MOTO(10, 3, 100, new List<string>(), new List<string>(), posicionInicial);
+            ActualizarPosicionMoto();
+        }
+
+        private void ActualizarPosicionMoto()
+        {
+            // Limpia el color anterior
+            foreach (var panel in gridPanels)
+            {
+                panel.BackColor = Color.LightGreen;
+            }
+
+            // Colorea la nueva posición de la moto
+            int x = moto.PosicionActual.X;
+            int y = moto.PosicionActual.Y;
+            gridPanels[x, y].BackColor = Color.Red;
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            Casilla nuevaPosicion = null;
+
+            switch (keyData)
+            {
+                case Keys.Up:
+                    nuevaPosicion = moto.PosicionActual.Arriba;
+                    break;
+                case Keys.Down:
+                    nuevaPosicion = moto.PosicionActual.Abajo;
+                    break;
+                case Keys.Left:
+                    nuevaPosicion = moto.PosicionActual.Izquierda;
+                    break;
+                case Keys.Right:
+                    nuevaPosicion = moto.PosicionActual.Derecha;
+                    break;
+            }
+
+            if (nuevaPosicion != null)
+            {
+                moto.Mover(nuevaPosicion);
+                ActualizarPosicionMoto();
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
 
         private void GAME_Load(object sender, EventArgs e)
         {
