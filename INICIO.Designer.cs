@@ -1,4 +1,4 @@
-﻿namespace Proyecto2__Tron
+﻿namespace Proyecto2
 {
     partial class INICIO
     {
@@ -47,7 +47,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.pictureBox1.Image = global::Proyecto2__Tron.Properties.Resources.Start_screen;
+            this.pictureBox1.Image = global::Proyecto2.Properties.Resources.Start_screen;
             this.pictureBox1.Location = new System.Drawing.Point(-4, -15);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(1371, 598);

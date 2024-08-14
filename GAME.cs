@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Proyecto2__Tron;
+using System.Collections.Generic;
 
-namespace Proyecto2__Tron
+
+namespace Proyecto2
 {
     public partial class GAME : Form
     {
-        private MOTO moto;  // Declarar la variable moto
+        private MOTO moto;
         private int cellSize = 20;  // Tamaño de cada celda en píxeles
         private Panel[,] gridPanels;  // Matriz de Paneles que representarán el grid
         private int columnas;
@@ -55,7 +56,7 @@ namespace Proyecto2__Tron
                     panel.BackColor = Color.LightGreen;  // Establecer el color de fondo
 
                     // Establecer la imagen de fondo
-                    panel.BackgroundImage = Image.FromFile("C:\\Users\\Pablo\\OneDrive - Estudiantes ITCR\\TEC\\Semestre 2\\00 Datos\\P2\\Proyecto2- Tron\\Resources\\celda.jpg");  // Reemplaza con la ruta de tu imagen
+                    panel.BackgroundImage = Image.FromFile("C:\\Users\\Pablo\\OneDrive - Estudiantes ITCR\\TEC\\Semestre 2\\00 Datos\\P2\\Proyecto2\\Resources\\celda.jpg");  // Reemplaza con la ruta de tu imagen
                     panel.BackgroundImageLayout = ImageLayout.Stretch;
 
                     // Guardar el panel en la matriz

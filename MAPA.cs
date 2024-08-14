@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Proyecto2__Tron
+namespace Proyecto2
 {
     public class Casilla
     {

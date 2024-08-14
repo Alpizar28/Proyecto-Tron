@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Proyecto2__Tron
+namespace Proyecto2
 {
     public class MOTO
     {

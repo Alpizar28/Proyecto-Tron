@@ -1,11 +1,11 @@
-﻿using Proyecto2__Tron;
+﻿using Proyecto2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Proyecto2__Tron
+namespace Proyecto2
 {
     internal static class Program
     {

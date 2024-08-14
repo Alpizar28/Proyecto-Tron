@@ -1,4 +1,4 @@
-﻿namespace Proyecto2__Tron
+﻿namespace Proyecto2
 {
     partial class GAME
     {
@@ -34,7 +34,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::Proyecto2__Tron.Properties.Resources.TRON;
+            this.pictureBox1.Image = global::Proyecto2.Properties.Resources.TRON;
             this.pictureBox1.Location = new System.Drawing.Point(372, 12);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(295, 62);

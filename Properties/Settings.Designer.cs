@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Proyecto2__Tron.Properties
+namespace Proyecto2.Properties
 {
 
 

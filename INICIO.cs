@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Proyecto2__Tron
+namespace Proyecto2
 {
     public partial class INICIO : Form
     {
