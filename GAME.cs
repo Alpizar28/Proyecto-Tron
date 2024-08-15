@@ -13,7 +13,7 @@ namespace Proyecto2
         private int columnas;
         private int filas;
         private Grid grid;  // Declarar la variable grid
-
+        //Game(49,28)
         public GAME(int columnas, int filas)
         {
             InitializeComponent();
@@ -84,26 +84,57 @@ namespace Proyecto2
 
         private void ActualizarPosicionMoto()
         {
-            // Limpia el color anterior
-            foreach (var panel in gridPanels)
+            // Primero, restablecer el color de la casilla más antigua de la estela si se excede el tamaño
+            if (moto.Estela.Longitud > moto.Tamaño_Estela)
             {
-                panel.BackColor = Color.MediumPurple;
+                Nodo actual = moto.Estela.Cabeza;
+                Nodo previo = null;
+
+                while (actual.Siguiente != null)
+                {
+                    previo = actual;
+                    actual = actual.Siguiente;
+                }
+
+                // Restablecer el color de la última casilla
+                int xEliminar = actual.X;
+                int yEliminar = actual.Y;
+
+                if (xEliminar >= 0 && xEliminar < columnas && yEliminar >= 0 && yEliminar < filas)
+                {
+                    gridPanels[xEliminar, yEliminar].BackColor = Color.MediumPurple; // Restaurar color original
+                }
+
+                // Eliminar el último nodo utilizando el método de la clase Estela
+                moto.Estela.EliminarUltimoNodoManualmente();
             }
 
             // Colorea la nueva posición de la moto
             int x = moto.PosicionActual.X;
             int y = moto.PosicionActual.Y;
 
-            // Verifica que las coordenadas estén dentro de los límites del grid
-            if (x >= 0 && x<= 1050 && y >= 0 && y<= 1050)
+            if (x >= 0 && x < columnas && y >= 0 && y < filas)
             {
-                gridPanels[x, y].BackColor = Color.Red;
+                gridPanels[x, y].BackColor = Color.Red; // Color de la moto
             }
             else
             {
                 MessageBox.Show($"Error: La posición de la moto ({x}, {y}) está fuera de los límites del grid.");
+                return;
+            }
+
+            // Colorea la estela de la moto
+            Nodo nodoEstela = moto.Estela.Cabeza;
+            while (nodoEstela != null)
+            {
+                if (nodoEstela.X >= 0 && nodoEstela.X < columnas && nodoEstela.Y >= 0 && nodoEstela.Y < filas)
+                {
+                    gridPanels[nodoEstela.X, nodoEstela.Y].BackColor = Color.LightBlue; // Color de la estela
+                }
+                nodoEstela = nodoEstela.Siguiente;
             }
         }
+
 
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -126,14 +157,27 @@ namespace Proyecto2
                     break;
             }
 
-            if (nuevaPosicion != null)
+            if (nuevaPosicion != null && nuevaPosicion.X >= 0 && nuevaPosicion.X < filas )
             {
-                moto.Mover(nuevaPosicion);
-                ActualizarPosicionMoto();
+                if (nuevaPosicion.Y >= 0 && nuevaPosicion.Y < columnas)
+                { 
+                    moto.Mover(nuevaPosicion);
+                    ActualizarPosicionMoto();
+                }
+                else
+                {
+                    MessageBox.Show("error en las x");
+                }
+                    
+            }
+            else
+            {
+                MessageBox.Show($"Error: La posición de la moto ({nuevaPosicion?.X}, {nuevaPosicion?.Y}) está fuera de los límites del grid.");
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
 
         private void GAME_Load(object sender, EventArgs e)
         {

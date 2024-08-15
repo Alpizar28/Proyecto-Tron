@@ -16,5 +16,10 @@ namespace Proyecto2
             GAME gameForm = new GAME(49, 28);
             gameForm.Show();
         }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -12,6 +12,8 @@ namespace Proyecto2
         public List<string> Poderes { get; set; }
         public Casilla PosicionActual { get; private set; }
 
+        public Estela Estela { get; private set; }
+
         public MOTO(int velocidad, int tamaño_estela, int combustible, List<string> items, List<string> poderes, Casilla posicionInicial)
         {
             Velocidad = velocidad;
@@ -20,12 +22,17 @@ namespace Proyecto2
             Items = items;
             Poderes = poderes;
             PosicionActual = posicionInicial;
+            Estela = new Estela(tamaño_estela);
+
+            // Inicializar la estela con la posición inicial
+            Estela.AgregarNodo(posicionInicial.X, posicionInicial.Y);
         }
 
         public void Mover(Casilla nuevaPosicion)
         {
             if (Combustible > 0 && nuevaPosicion != null)
             {
+                Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y); // Agregar la posición actual a la estela
                 PosicionActual = nuevaPosicion;
                 Combustible -= 1;
                 Console.WriteLine("Combustible: " + Combustible);
