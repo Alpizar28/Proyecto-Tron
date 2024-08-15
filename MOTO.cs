@@ -35,8 +35,6 @@ namespace Proyecto2
                 Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y); // Agregar la posición actual a la estela
                 PosicionActual = nuevaPosicion;
                 Combustible -= 1;
-                Console.WriteLine("Combustible: " + Combustible);
-                Console.WriteLine($"Moto movida a posición ({PosicionActual.X}, {PosicionActual.Y})");
             }
         }
 

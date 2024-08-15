@@ -40,10 +40,10 @@ namespace Proyecto2
             // Inicializar la matriz de Paneles
             gridPanels = new Panel[filas, columnas];
 
-            // Dibujar el grid visualmente
-            for (int i = 0; i < filas; i++)
+            // En CrearGrid
+            for (int i = 0; i < filas; i++) // i representa la fila (Y)
             {
-                for (int j = 0; j < columnas; j++)
+                for (int j = 0; j < columnas; j++) // j representa la columna (X)
                 {
                     Panel panel = new Panel();
                     panel.Size = new Size(cellSize, cellSize);
@@ -55,12 +55,13 @@ namespace Proyecto2
                     panel.BackColor = Color.MediumPurple;  // Establecer el color de fondo
 
                     // Guardar el panel en la matriz
-                    gridPanels[i, j] = panel;
+                    gridPanels[i, j] = panel;  // i (Y) como fila, j (X) como columna
 
                     // Agregar el panel al formulario
                     this.Controls.Add(panel);
                 }
             }
+
 
             // Forzar la actualización de la interfaz
             this.Invalidate();
@@ -102,7 +103,7 @@ namespace Proyecto2
 
                 if (xEliminar >= 0 && xEliminar < columnas && yEliminar >= 0 && yEliminar < filas)
                 {
-                    gridPanels[xEliminar, yEliminar].BackColor = Color.MediumPurple; // Restaurar color original
+                    gridPanels[yEliminar, xEliminar].BackColor = Color.MediumPurple; // Restaurar color original
                 }
 
                 // Eliminar el último nodo utilizando el método de la clase Estela
@@ -110,12 +111,12 @@ namespace Proyecto2
             }
 
             // Colorea la nueva posición de la moto
-            int x = moto.PosicionActual.X;
-            int y = moto.PosicionActual.Y;
+            int x = moto.PosicionActual.X;  // Columna
+            int y = moto.PosicionActual.Y;  // Fila
 
             if (x >= 0 && x < columnas && y >= 0 && y < filas)
             {
-                gridPanels[x, y].BackColor = Color.Red; // Color de la moto
+                gridPanels[y, x].BackColor = Color.Red; // Color de la moto
             }
             else
             {
@@ -129,7 +130,7 @@ namespace Proyecto2
             {
                 if (nodoEstela.X >= 0 && nodoEstela.X < columnas && nodoEstela.Y >= 0 && nodoEstela.Y < filas)
                 {
-                    gridPanels[nodoEstela.X, nodoEstela.Y].BackColor = Color.LightBlue; // Color de la estela
+                    gridPanels[nodoEstela.Y, nodoEstela.X].BackColor = Color.LightBlue; // Color de la estela
                 }
                 nodoEstela = nodoEstela.Siguiente;
             }
@@ -157,26 +158,26 @@ namespace Proyecto2
                     break;
             }
 
-            if (nuevaPosicion != null && nuevaPosicion.X >= 0 && nuevaPosicion.X < filas )
+            if (nuevaPosicion != null && nuevaPosicion.X >= 0 && nuevaPosicion.X < columnas)
             {
-                if (nuevaPosicion.Y >= 0 && nuevaPosicion.Y < columnas)
-                { 
+                if (nuevaPosicion.Y >= 0 && nuevaPosicion.Y < filas)
+                {
                     moto.Mover(nuevaPosicion);
                     ActualizarPosicionMoto();
                 }
                 else
                 {
-                    MessageBox.Show("error en las x");
+                    MessageBox.Show($"Error en las Y: La posición Y ({nuevaPosicion.Y}) está fuera del rango permitido (0-{filas - 1}).");
                 }
-                    
             }
             else
             {
-                MessageBox.Show($"Error: La posición de la moto ({nuevaPosicion?.X}, {nuevaPosicion?.Y}) está fuera de los límites del grid.");
+                MessageBox.Show($"Error en las X: La posición X ({nuevaPosicion?.X}) está fuera del rango permitido (0-{columnas - 1}).");
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
 
 
         private void GAME_Load(object sender, EventArgs e)

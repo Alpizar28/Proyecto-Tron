@@ -25,50 +25,52 @@ namespace Proyecto2
 
         public Grid(int filas, int columnas)
         {
-            if (filas <= 0 || columnas <= 0) throw new ArgumentException("Las filas y columnas deben ser mayores que cero.");
+            Casilla[,] grid = new Casilla[filas, columnas];
 
-            // Crear la primera casilla
-            PrimerCasilla = new Casilla(0, 0);
-
-            // Mantener una referencia a la fila anterior
-            Casilla filaAnterior = PrimerCasilla;
-            Casilla filaActual = PrimerCasilla;
-
-            // Crear el grid usando listas enlazadas
+            // Crear el grid con las posiciones correspondientes
             for (int i = 0; i < filas; i++)
             {
-                if (i > 0)
+                for (int j = 0; j < columnas; j++)
                 {
-                    filaActual = new Casilla(i, 0);
-                    filaAnterior.Abajo = filaActual;
-                    filaActual.Arriba = filaAnterior;
+                    grid[i, j] = new Casilla(j, i); 
                 }
+            }
 
-                Casilla actual = filaActual;
-                Casilla nodoAnterior = filaAnterior;
-
-                for (int j = 1; j < columnas; j++)
+            // Establecer las referencias de las casillas
+            for (int i = 0; i < filas; i++)
+            {
+                for (int j = 0; j < columnas; j++)
                 {
-                    Casilla nueva = new Casilla(i, j);
-                    actual.Derecha = nueva;
-                    nueva.Izquierda = actual;
+                    Casilla actual = grid[i, j];
 
+                    // Establecer la referencia a la casilla de arriba
                     if (i > 0)
                     {
-                        nodoAnterior = nodoAnterior?.Derecha;
-                        if (nodoAnterior != null)
-                        {
-                            nodoAnterior.Abajo = nueva;
-                            nueva.Arriba = nodoAnterior;
-                        }
-
+                        actual.Arriba = grid[i - 1, j];
                     }
 
-                    actual = nueva;
-                }
+                    // Establecer la referencia a la casilla de abajo
+                    if (i < filas - 1)
+                    {
+                        actual.Abajo = grid[i + 1, j];
+                    }
 
-                filaAnterior = filaActual;
+                    // Establecer la referencia a la casilla de la izquierda
+                    if (j > 0)
+                    {
+                        actual.Izquierda = grid[i, j - 1];
+                    }
+
+                    // Establecer la referencia a la casilla de la derecha
+                    if (j < columnas - 1)
+                    {
+                        actual.Derecha = grid[i, j + 1];
+                    }
+                }
             }
+
+            // Establecer la primera casilla como la posición inicial
+            PrimerCasilla = grid[0, 0];
         }
 
         public Casilla ObtenerCasilla(int x, int y)
@@ -77,20 +79,19 @@ namespace Proyecto2
 
             Casilla actual = PrimerCasilla;
 
-            // Mover hacia abajo hasta la fila correcta
-            while (actual != null && actual.X != x)
+            // Mover hacia abajo hasta la fila correcta (Y)
+            while (actual != null && actual.Y != y)
             {
                 actual = actual.Abajo;
             }
 
-            // Ahora mover hacia la derecha hasta la columna correcta
-            while (actual != null && actual.Y != y)
+            // Ahora mover hacia la derecha hasta la columna correcta (X)
+            while (actual != null && actual.X != x)
             {
                 actual = actual.Derecha;
             }
 
             return actual;
         }
-
     }
 }
