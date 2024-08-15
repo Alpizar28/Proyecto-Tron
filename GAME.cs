@@ -51,20 +51,9 @@ namespace Proyecto2
                     // Ajustar la posición inicial del grid para centrarlo
                     panel.Location = new Point(startX + j * cellSize, startY + i * cellSize);
 
-                    panel.BorderStyle = BorderStyle.None;  // Eliminar bordes
-                    panel.BackColor = Color.LightGreen;  // Establecer el color de fondo
+                    panel.BorderStyle = BorderStyle.FixedSingle;  // Eliminar bordes
+                    panel.BackColor = Color.MediumPurple;  // Establecer el color de fondo
 
-                    // Establecer la imagen de fondo
-                    /*try
-                    {
-                        panel.BackgroundImage = Image.FromFile("C:\\Users\\Pablo\\OneDrive - Estudiantes ITCR\\TEC\\Semestre 2\\00 Datos\\P2\\Proyecto2\\Resources\\celda.jpg");
-                        panel.BackgroundImageLayout = ImageLayout.Stretch;
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Error al cargar la imagen: {ex.Message}");
-                    }
-                    */
                     // Guardar el panel en la matriz
                     gridPanels[i, j] = panel;
 
@@ -98,7 +87,7 @@ namespace Proyecto2
             // Limpia el color anterior
             foreach (var panel in gridPanels)
             {
-                panel.BackColor = Color.LightGreen;
+                panel.BackColor = Color.MediumPurple;
             }
 
             // Colorea la nueva posición de la moto
@@ -106,7 +95,7 @@ namespace Proyecto2
             int y = moto.PosicionActual.Y;
 
             // Verifica que las coordenadas estén dentro de los límites del grid
-            if (x >= 0 && x < filas && y >= 0 && y < columnas)
+            if (x >= 0 && x<= 1050 && y >= 0 && y<= 1050)
             {
                 gridPanels[x, y].BackColor = Color.Red;
             }

@@ -28,6 +28,7 @@ namespace Proyecto2
             {
                 PosicionActual = nuevaPosicion;
                 Combustible -= 1;
+                Console.WriteLine("Combustible: " + Combustible);
                 Console.WriteLine($"Moto movida a posición ({PosicionActual.X}, {PosicionActual.Y})");
             }
         }

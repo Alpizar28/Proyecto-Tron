@@ -25,59 +25,65 @@ namespace Proyecto2
 
         public Grid(int filas, int columnas)
         {
+            if (filas <= 0 || columnas <= 0) throw new ArgumentException("Las filas y columnas deben ser mayores que cero.");
+
             // Crear la primera casilla
             PrimerCasilla = new Casilla(0, 0);
 
-            Casilla actual = PrimerCasilla;
+            // Mantener una referencia a la fila anterior
+            Casilla filaAnterior = PrimerCasilla;
+            Casilla filaActual = PrimerCasilla;
 
             // Crear el grid usando listas enlazadas
             for (int i = 0; i < filas; i++)
             {
-                Casilla filaActual = actual;
+                if (i > 0)
+                {
+                    filaActual = new Casilla(i, 0);
+                    filaAnterior.Abajo = filaActual;
+                    filaActual.Arriba = filaAnterior;
+                }
+
+                Casilla actual = filaActual;
+                Casilla nodoAnterior = filaAnterior;
 
                 for (int j = 1; j < columnas; j++)
                 {
                     Casilla nueva = new Casilla(i, j);
                     actual.Derecha = nueva;
                     nueva.Izquierda = actual;
+
+                    if (i > 0)
+                    {
+                        nodoAnterior = nodoAnterior?.Derecha;
+                        if (nodoAnterior != null)
+                        {
+                            nodoAnterior.Abajo = nueva;
+                            nueva.Arriba = nodoAnterior;
+                        }
+
+                    }
+
                     actual = nueva;
                 }
 
-                // Si no es la última fila, conectamos la fila actual con la fila de abajo
-                if (i < filas - 1)
-                {
-                    Casilla nuevaFila = new Casilla(i + 1, 0);
-                    filaActual.Abajo = nuevaFila;
-                    nuevaFila.Arriba = filaActual;
-                    actual = nuevaFila;
-
-                    Casilla nodoAnterior = filaActual;
-                    Casilla nodoActual = nuevaFila;
-
-                    // Conectar las casillas de la nueva fila con las de la fila anterior
-                    for (int j = 1; j < columnas; j++)
-                    {
-                        nodoAnterior = nodoAnterior.Derecha;
-                        Casilla nuevoNodo = new Casilla(i + 1, j);
-                        nodoActual.Derecha = nuevoNodo;
-                        nuevoNodo.Izquierda = nodoActual;
-                        nodoAnterior.Abajo = nuevoNodo;
-                        nuevoNodo.Arriba = nodoAnterior;
-                        nodoActual = nuevoNodo;
-                    }
-                }
+                filaAnterior = filaActual;
             }
         }
 
         public Casilla ObtenerCasilla(int x, int y)
         {
+            if (x < 0 || y < 0) return null;
+
             Casilla actual = PrimerCasilla;
 
+            // Mover hacia abajo hasta la fila correcta
             while (actual != null && actual.X != x)
             {
                 actual = actual.Abajo;
             }
 
+            // Ahora mover hacia la derecha hasta la columna correcta
             while (actual != null && actual.Y != y)
             {
                 actual = actual.Derecha;
@@ -85,5 +91,6 @@ namespace Proyecto2
 
             return actual;
         }
+
     }
 }
