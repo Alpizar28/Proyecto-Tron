@@ -22,7 +22,7 @@ namespace Proyecto2
             Items = items;
             Poderes = poderes;
             PosicionActual = posicionInicial;
-            Estela = new Estela(tamaño_estela);
+            Estela = new Estela(3);  // Establecer la longitud máxima de la estela a 3
 
             // Inicializar la estela con la posición inicial
             Estela.AgregarNodo(posicionInicial.X, posicionInicial.Y);
@@ -37,6 +37,5 @@ namespace Proyecto2
                 Combustible -= 1;
             }
         }
-
     }
 }

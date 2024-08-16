@@ -8,183 +8,209 @@ namespace Proyecto2
     public partial class GAME : Form
     {
         private MOTO moto;
-        private int cellSize = 20;  // Tamaño de cada celda en píxeles
+        private readonly int cellSize = 20;  // Tamaño de cada celda en píxeles
         private Panel[,] gridPanels;  // Matriz de Paneles que representarán el grid
-        private int columnas;
-        private int filas;
+        private readonly int columnas;
+        private readonly int filas;
         private Grid grid;  // Declarar la variable grid
-        //Game(49,28)
+        private Timer movimientoTimer; // Temporizador para el movimiento continuo
+        private Keys direccionActual = Keys.Right;  // Comienza moviéndose hacia la derecha
+
         public GAME(int columnas, int filas)
         {
             InitializeComponent();
-            this.Size = new Size(1050, 750);  // Ajusta el tamaño de la ventana del juego
             this.columnas = columnas;
             this.filas = filas;
-            CrearGrid(columnas, filas);  // Crear el grid en esta ventana
+            this.Size = new Size(columnas * cellSize + 100, filas * cellSize + 100);  // Ajusta el tamaño de la ventana del juego
+            CrearGrid();  // Crear el grid en esta ventana
             InicializarMoto();
+            ConfigurarTemporizador();
         }
 
-        private void CrearGrid(int columnas, int filas)
+        private void CrearGrid()
         {
             // Inicializar el grid lógico
             grid = new Grid(filas, columnas);
 
-            // Tamaño total del grid
-            int gridWidth = columnas * cellSize;
-            int gridHeight = filas * cellSize;
-
             // Calcular las coordenadas iniciales para centrar el grid
-            int startX = (this.ClientSize.Width - gridWidth) / 2;
-            int startY = (this.ClientSize.Height - gridHeight) / 2;
+            int startX = (this.ClientSize.Width - columnas * cellSize) / 2;
+            int startY = 55;  // Aplica el margen superior
 
             // Inicializar la matriz de Paneles
             gridPanels = new Panel[filas, columnas];
 
-            // En CrearGrid
-            for (int i = 0; i < filas; i++) // i representa la fila (Y)
+            for (int i = 0; i < filas; i++)
             {
-                for (int j = 0; j < columnas; j++) // j representa la columna (X)
+                for (int j = 0; j < columnas; j++)
                 {
-                    Panel panel = new Panel();
-                    panel.Size = new Size(cellSize, cellSize);
-
-                    // Ajustar la posición inicial del grid para centrarlo
-                    panel.Location = new Point(startX + j * cellSize, startY + i * cellSize);
-
-                    panel.BorderStyle = BorderStyle.FixedSingle;  // Eliminar bordes
-                    panel.BackColor = Color.MediumPurple;  // Establecer el color de fondo
-
-                    // Guardar el panel en la matriz
-                    gridPanels[i, j] = panel;  // i (Y) como fila, j (X) como columna
-
-                    // Agregar el panel al formulario
-                    this.Controls.Add(panel);
+                    gridPanels[i, j] = CrearPanel(startX, startY, i, j);
+                    this.Controls.Add(gridPanels[i, j]);
                 }
             }
-
 
             // Forzar la actualización de la interfaz
             this.Invalidate();
         }
 
+        private Panel CrearPanel(int startX, int startY, int fila, int columna)
+        {
+            Panel panel = new Panel
+            {
+                Size = new Size(cellSize, cellSize),
+                Location = new Point(startX + columna * cellSize, startY + fila * cellSize),
+                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = Color.MediumPurple
+            };
+            return panel;
+        }
+
         private void InicializarMoto()
         {
-            // Asegúrate de que la casilla inicial (0, 0) existe en el grid
             Casilla posicionInicial = grid.ObtenerCasilla(0, 0);
-            if (posicionInicial != null)
+            moto = new MOTO(10, 3, 100, new List<string>(), new List<string>(), posicionInicial);
+            ActualizarPosicionMoto();
+        }
+
+        private void ConfigurarTemporizador()
+        {
+            movimientoTimer = new Timer
             {
-                moto = new MOTO(10, 3, 100, new List<string>(), new List<string>(), posicionInicial);
+                Interval = 150 // Intervalo en milisegundos
+            };
+            movimientoTimer.Tick += MoverMoto;
+            movimientoTimer.Start();
+        }
+
+        private void MoverMoto(object sender, EventArgs e)
+        {
+            Casilla nuevaPosicion = ObtenerNuevaPosicion();
+
+            if (EsPosicionValida(nuevaPosicion))
+            {
+                moto.Mover(nuevaPosicion);
                 ActualizarPosicionMoto();
             }
             else
             {
-                MessageBox.Show("Error: No se pudo obtener la posición inicial para la moto.");
+                FinalizarJuego();
             }
         }
 
+        private Casilla ObtenerNuevaPosicion()
+        {
+            switch (direccionActual)
+            {
+                case Keys.Up:
+                    return moto.PosicionActual.Arriba;
+                case Keys.Down:
+                    return moto.PosicionActual.Abajo;
+                case Keys.Left:
+                    return moto.PosicionActual.Izquierda;
+                case Keys.Right:
+                    return moto.PosicionActual.Derecha;
+                default:
+                    return null;
+            }
+        }
+
+        private bool EsPosicionValida(Casilla posicion)
+        {
+            return posicion != null &&
+                   posicion.X >= 0 && posicion.X < columnas &&
+                   posicion.Y >= 0 && posicion.Y < filas;
+        }
+
+        private void FinalizarJuego()
+        {
+            movimientoTimer.Stop();
+            this.Close(); // Cierra la ventana del juego actual
+            MostrarPantallaFin();
+        }
+
+        private void MostrarPantallaFin()
+        {
+            Form pantallaFin = new Form
+            {
+                Text = "FIN DEL JUEGO",
+                Size = new Size(400, 300),
+                StartPosition = FormStartPosition.CenterScreen
+            };
+
+            Label label = new Label
+            {
+                Text = "¡Fin del juego!",
+                Font = new Font("Arial", 24, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Fill
+            };
+
+            pantallaFin.Controls.Add(label);
+            pantallaFin.ShowDialog(); // Muestra la pantalla de "FIN" como un cuadro de diálogo modal
+
+            // Libera los recursos del formulario "pantallaFin"
+            pantallaFin.Dispose();
+        }
 
         private void ActualizarPosicionMoto()
         {
-            // Primero, restablecer el color de la casilla más antigua de la estela si se excede el tamaño
-            if (moto.Estela.Longitud > moto.Tamaño_Estela)
+            if (moto.Estela.Longitud > moto.Estela.MaxLongitud)
             {
-                Nodo actual = moto.Estela.Cabeza;
-                Nodo previo = null;
-
-                while (actual.Siguiente != null)
-                {
-                    previo = actual;
-                    actual = actual.Siguiente;
-                }
-
-                // Restablecer el color de la última casilla
-                int xEliminar = actual.X;
-                int yEliminar = actual.Y;
-
-                if (xEliminar >= 0 && xEliminar < columnas && yEliminar >= 0 && yEliminar < filas)
-                {
-                    gridPanels[yEliminar, xEliminar].BackColor = Color.MediumPurple; // Restaurar color original
-                }
-
-                // Eliminar el último nodo utilizando el método de la clase Estela
-                moto.Estela.EliminarUltimoNodoManualmente();
+                EliminarNodoDeEstela();
             }
 
-            // Colorea la nueva posición de la moto
-            int x = moto.PosicionActual.X;  // Columna
-            int y = moto.PosicionActual.Y;  // Fila
-
-            if (x >= 0 && x < columnas && y >= 0 && y < filas)
-            {
-                gridPanels[y, x].BackColor = Color.Red; // Color de la moto
-            }
-            else
-            {
-                MessageBox.Show($"Error: La posición de la moto ({x}, {y}) está fuera de los límites del grid.");
-                return;
-            }
+            ColorearCelda(moto.PosicionActual.X, moto.PosicionActual.Y, Color.Red);
 
             // Colorea la estela de la moto
             Nodo nodoEstela = moto.Estela.Cabeza;
             while (nodoEstela != null)
             {
-                if (nodoEstela.X >= 0 && nodoEstela.X < columnas && nodoEstela.Y >= 0 && nodoEstela.Y < filas)
-                {
-                    gridPanels[nodoEstela.Y, nodoEstela.X].BackColor = Color.LightBlue; // Color de la estela
-                }
+                ColorearCelda(nodoEstela.X, nodoEstela.Y, Color.LightBlue);
                 nodoEstela = nodoEstela.Siguiente;
             }
         }
 
+        private void EliminarNodoDeEstela()
+        {
+            Nodo actual = moto.Estela.Cabeza;
+            Nodo previo = null;
 
+            while (actual.Siguiente != null)
+            {
+                previo = actual;
+                actual = actual.Siguiente;
+            }
+
+            // Restablecer el color de la última casilla
+            ColorearCelda(actual.X, actual.Y, Color.MediumPurple);
+
+            moto.Estela.EliminarUltimoNodo();
+        }
+
+        private void ColorearCelda(int x, int y, Color color)
+        {
+            if (x >= 0 && x < columnas && y >= 0 && y < filas)
+            {
+                gridPanels[y, x].BackColor = color;
+            }
+        }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            Casilla nuevaPosicion = null;
-
-            switch (keyData)
+            if (keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.Left || keyData == Keys.Right)
             {
-                case Keys.Up:
-                    nuevaPosicion = moto.PosicionActual.Arriba;
-                    break;
-                case Keys.Down:
-                    nuevaPosicion = moto.PosicionActual.Abajo;
-                    break;
-                case Keys.Left:
-                    nuevaPosicion = moto.PosicionActual.Izquierda;
-                    break;
-                case Keys.Right:
-                    nuevaPosicion = moto.PosicionActual.Derecha;
-                    break;
-            }
-
-            if (nuevaPosicion != null && nuevaPosicion.X >= 0 && nuevaPosicion.X < columnas)
-            {
-                if (nuevaPosicion.Y >= 0 && nuevaPosicion.Y < filas)
-                {
-                    moto.Mover(nuevaPosicion);
-                    ActualizarPosicionMoto();
-                }
-                else
-                {
-                    MessageBox.Show($"Error en las Y: La posición Y ({nuevaPosicion.Y}) está fuera del rango permitido (0-{filas - 1}).");
-                }
-            }
-            else
-            {
-                MessageBox.Show($"Error en las X: La posición X ({nuevaPosicion?.X}) está fuera del rango permitido (0-{columnas - 1}).");
+                direccionActual = keyData;
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-
+        private void MostrarMensajeError(string mensaje)
+        {
+            MessageBox.Show(mensaje);
+        }
 
         private void GAME_Load(object sender, EventArgs e)
         {
-
         }
     }
-
-
 }

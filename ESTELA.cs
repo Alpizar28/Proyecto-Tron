@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Proyecto2
 {
@@ -46,7 +43,7 @@ namespace Proyecto2
             }
         }
 
-        private void EliminarUltimoNodo()
+        public void EliminarUltimoNodo()
         {
             if (Cabeza == null || Cabeza.Siguiente == null)
             {
@@ -64,14 +61,5 @@ namespace Proyecto2
             actual.Siguiente = null;
             Longitud--;
         }
-
-        // Método para eliminar manualmente el último nodo y ajustar la longitud
-        public void EliminarUltimoNodoManualmente()
-        {
-            EliminarUltimoNodo();
-        }
     }
-
-
-
 }

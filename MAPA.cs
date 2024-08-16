@@ -25,6 +25,8 @@ namespace Proyecto2
 
         public Grid(int filas, int columnas)
         {
+            if (filas <= 0 || columnas <= 0) throw new ArgumentException("Las filas y columnas deben ser mayores que cero.");
+
             Casilla[,] grid = new Casilla[filas, columnas];
 
             // Crear el grid con las posiciones correspondientes
@@ -32,7 +34,7 @@ namespace Proyecto2
             {
                 for (int j = 0; j < columnas; j++)
                 {
-                    grid[i, j] = new Casilla(j, i); 
+                    grid[i, j] = new Casilla(j, i); // X es columna, Y es fila
                 }
             }
 
