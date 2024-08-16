@@ -1,73 +1,44 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections.Generic;
 
 namespace Proyecto2
 {
     public partial class GAME : Form
     {
         private MOTO moto;
-        private readonly int cellSize = 20;  // Tamaño de cada celda en píxeles
-        private Panel[,] gridPanels;  // Matriz de Paneles que representarán el grid
-        private readonly int columnas;
-        private readonly int filas;
-        private Grid grid;  // Declarar la variable grid
-        private Timer movimientoTimer; // Temporizador para el movimiento continuo
-        private Keys direccionActual = Keys.Right;  // Comienza moviéndose hacia la derecha
+        private MAPA mapa;
+        private Timer movimientoTimer;
+        private Keys direccionActual = Keys.Up;
+        private int columnas;
+        private int filas;
 
         public GAME(int columnas, int filas)
         {
             InitializeComponent();
             this.columnas = columnas;
             this.filas = filas;
-            this.Size = new Size(columnas * cellSize + 100, filas * cellSize + 100);  // Ajusta el tamaño de la ventana del juego
-            CrearGrid();  // Crear el grid en esta ventana
+            this.Size = new Size(columnas * 20 + 100, filas * 20 + 100);  // Ajusta el tamaño de la ventana del juego
+
+            mapa = new MAPA(filas, columnas, 20, this);  // Crear el grid en esta ventana
             InicializarMoto();
             ConfigurarTemporizador();
         }
 
-        private void CrearGrid()
-        {
-            // Inicializar el grid lógico
-            grid = new Grid(filas, columnas);
-
-            // Calcular las coordenadas iniciales para centrar el grid
-            int startX = (this.ClientSize.Width - columnas * cellSize) / 2;
-            int startY = 55;  // Aplica el margen superior
-
-            // Inicializar la matriz de Paneles
-            gridPanels = new Panel[filas, columnas];
-
-            for (int i = 0; i < filas; i++)
-            {
-                for (int j = 0; j < columnas; j++)
-                {
-                    gridPanels[i, j] = CrearPanel(startX, startY, i, j);
-                    this.Controls.Add(gridPanels[i, j]);
-                }
-            }
-
-            // Forzar la actualización de la interfaz
-            this.Invalidate();
-        }
-
-        private Panel CrearPanel(int startX, int startY, int fila, int columna)
-        {
-            Panel panel = new Panel
-            {
-                Size = new Size(cellSize, cellSize),
-                Location = new Point(startX + columna * cellSize, startY + fila * cellSize),
-                BorderStyle = BorderStyle.FixedSingle,
-                BackColor = Color.MediumPurple
-            };
-            return panel;
-        }
-
         private void InicializarMoto()
         {
-            Casilla posicionInicial = grid.ObtenerCasilla(0, 0);
+            Casilla posicionInicial = mapa.ObtenerCasilla(24, 26);
+
             moto = new MOTO(10, 3, 100, new List<string>(), new List<string>(), posicionInicial);
+
+            moto.ConfigurarImagenes(
+                Properties.Resources.MotoDerecha,
+                Properties.Resources.MotoIzquierda,
+                Properties.Resources.MotoArriba,
+                Properties.Resources.MotoAbajo
+            );
+
             ActualizarPosicionMoto();
         }
 
@@ -85,50 +56,46 @@ namespace Proyecto2
         {
             Casilla nuevaPosicion = ObtenerNuevaPosicion();
 
-            if (EsPosicionValida(nuevaPosicion))
+            if (!moto.EsPosicionValida(nuevaPosicion, columnas, filas))
+            {
+                FinalizarJuego("Se salió de los límites");
+            }
+            else if (moto.Combustible <= 0)
+            {
+                FinalizarJuego("Se quedó sin combustible");
+            }
+            else
             {
                 moto.Mover(nuevaPosicion);
                 ActualizarPosicionMoto();
             }
-            else
-            {
-                FinalizarJuego();
-            }
         }
+
 
         private Casilla ObtenerNuevaPosicion()
         {
-            switch (direccionActual)
+            Casilla nuevaPosicion = direccionActual switch
             {
-                case Keys.Up:
-                    return moto.PosicionActual.Arriba;
-                case Keys.Down:
-                    return moto.PosicionActual.Abajo;
-                case Keys.Left:
-                    return moto.PosicionActual.Izquierda;
-                case Keys.Right:
-                    return moto.PosicionActual.Derecha;
-                default:
-                    return null;
+                Keys.Up => moto.PosicionActual.Arriba,
+                Keys.Down => moto.PosicionActual.Abajo,
+                Keys.Left => moto.PosicionActual.Izquierda,
+                Keys.Right => moto.PosicionActual.Derecha,
+                _ => null,
+            };
+
+            if (nuevaPosicion == null)
+            {
+                Console.WriteLine("La nueva posición es null en ObtenerNuevaPosicion.");
             }
+
+            return nuevaPosicion;
         }
 
-        private bool EsPosicionValida(Casilla posicion)
-        {
-            return posicion != null &&
-                   posicion.X >= 0 && posicion.X < columnas &&
-                   posicion.Y >= 0 && posicion.Y < filas;
-        }
-
-        private void FinalizarJuego()
+        private void FinalizarJuego(string razonMuerte)
         {
             movimientoTimer.Stop();
-            this.Close(); // Cierra la ventana del juego actual
-            MostrarPantallaFin();
-        }
+            this.Close();
 
-        private void MostrarPantallaFin()
-        {
             Form pantallaFin = new Form
             {
                 Text = "FIN DEL JUEGO",
@@ -138,60 +105,25 @@ namespace Proyecto2
 
             Label label = new Label
             {
-                Text = "¡Fin del juego!",
+                Text = $"¡Fin del juego! Razón: {razonMuerte}",
                 Font = new Font("Arial", 24, FontStyle.Bold),
                 TextAlign = ContentAlignment.MiddleCenter,
                 Dock = DockStyle.Fill
             };
 
             pantallaFin.Controls.Add(label);
-            pantallaFin.ShowDialog(); // Muestra la pantalla de "FIN" como un cuadro de diálogo modal
+            pantallaFin.ShowDialog();
 
-            // Libera los recursos del formulario "pantallaFin"
-            pantallaFin.Dispose();
+            pantallaFin.Dispose(); // Libera los recursos utilizados por la pantalla de fin
         }
+
 
         private void ActualizarPosicionMoto()
         {
-            if (moto.Estela.Longitud > moto.Estela.MaxLongitud)
-            {
-                EliminarNodoDeEstela();
-            }
+            moto.ActualizarEstela(mapa);
 
-            ColorearCelda(moto.PosicionActual.X, moto.PosicionActual.Y, Color.Red);
-
-            // Colorea la estela de la moto
-            Nodo nodoEstela = moto.Estela.Cabeza;
-            while (nodoEstela != null)
-            {
-                ColorearCelda(nodoEstela.X, nodoEstela.Y, Color.LightBlue);
-                nodoEstela = nodoEstela.Siguiente;
-            }
-        }
-
-        private void EliminarNodoDeEstela()
-        {
-            Nodo actual = moto.Estela.Cabeza;
-            Nodo previo = null;
-
-            while (actual.Siguiente != null)
-            {
-                previo = actual;
-                actual = actual.Siguiente;
-            }
-
-            // Restablecer el color de la última casilla
-            ColorearCelda(actual.X, actual.Y, Color.MediumPurple);
-
-            moto.Estela.EliminarUltimoNodo();
-        }
-
-        private void ColorearCelda(int x, int y, Color color)
-        {
-            if (x >= 0 && x < columnas && y >= 0 && y < filas)
-            {
-                gridPanels[y, x].BackColor = color;
-            }
+            Image imagenActual = moto.ObtenerImagenActual(direccionActual);
+            mapa.ColocarImagenEnCelda(moto.PosicionActual.X, moto.PosicionActual.Y, imagenActual);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -202,11 +134,6 @@ namespace Proyecto2
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-        private void MostrarMensajeError(string mensaje)
-        {
-            MessageBox.Show(mensaje);
         }
 
         private void GAME_Load(object sender, EventArgs e)
