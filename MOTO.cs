@@ -27,10 +27,9 @@ namespace Proyecto2
             Items = items;
             Poderes = poderes;
             PosicionActual = posicionInicial;
-            Estela = new Estela(3);  // Establecer la longitud máxima de la estela a 3
+            Estela = new Estela(tamaño_estela);
 
-            // Inicializar la estela con la posición inicial
-            Estela.AgregarNodo(posicionInicial.X, posicionInicial.Y);
+            Estela.AgregarNodo(posicionInicial.X, posicionInicial.Y, null);
         }
 
         public void ConfigurarImagenes(Image derecha, Image izquierda, Image arriba, Image abajo)
@@ -41,11 +40,11 @@ namespace Proyecto2
             motoImageAbajo = abajo;
         }
 
-        public void Mover(Casilla nuevaPosicion)
+        public void Mover(Casilla nuevaPosicion, MAPA mapa)
         {
             if (Combustible > 0 && nuevaPosicion != null)
             {
-                Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y); // Agregar la posición actual a la estela
+                Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
                 PosicionActual = nuevaPosicion;
                 Combustible -= 1;
             }
@@ -77,32 +76,11 @@ namespace Proyecto2
             return esValida;
         }
 
-        public void EliminarNodoDeEstela()
-        {
-            Nodo actual = Estela.Cabeza;
-            Nodo previo = null;
-
-            while (actual.Siguiente != null)
-            {
-                previo = actual;
-                actual = actual.Siguiente;
-            }
-
-            Estela.EliminarUltimoNodo();
-        }
-
         public void ActualizarEstela(MAPA mapa)
         {
-            if (Estela.Longitud > Estela.MaxLongitud)
+            foreach (var (X, Y) in Estela.ObtenerPosiciones())
             {
-                EliminarNodoDeEstela();
-            }
-
-            Nodo nodoEstela = Estela.Cabeza;
-            while (nodoEstela != null)
-            {
-                mapa.ColorearCelda(nodoEstela.X, nodoEstela.Y, Color.LightBlue);
-                nodoEstela = nodoEstela.Siguiente;
+                mapa.ColorearCelda(X, Y, Color.SkyBlue);
             }
         }
     }

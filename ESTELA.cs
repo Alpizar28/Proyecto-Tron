@@ -1,64 +1,32 @@
-﻿using System;
+﻿using Proyecto2;
+using System.Collections.Generic;
+using System.Drawing;
 
-namespace Proyecto2
+public class Estela
 {
-    public class Nodo
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public Nodo Siguiente { get; set; }
+    private Queue<(int X, int Y)> posiciones;
+    public int MaxLongitud { get; set; }
 
-        public Nodo(int x, int y)
-        {
-            X = x;
-            Y = y;
-            Siguiente = null;
-        }
+    public Estela(int maxLongitud)
+    {
+        posiciones = new Queue<(int, int)>();
+        MaxLongitud = maxLongitud;
     }
 
-    public class Estela
+    public void AgregarNodo(int x, int y, MAPA mapa)
     {
-        public Nodo Cabeza { get; private set; }
-        public int Longitud { get; private set; }
-        public int MaxLongitud { get; set; }
-
-        public Estela(int maxLongitud)
+        if (posiciones.Count >= MaxLongitud)
         {
-            Cabeza = null;
-            Longitud = 0;
-            MaxLongitud = maxLongitud;
+            var nodoEliminado = posiciones.Dequeue();
+            mapa.ColorearCelda(nodoEliminado.X, nodoEliminado.Y, Color.MediumPurple);
         }
-
-        public void AgregarNodo(int x, int y)
-        {
-            Nodo nuevoNodo = new Nodo(x, y);
-            nuevoNodo.Siguiente = Cabeza;
-            Cabeza = nuevoNodo;
-            Longitud++;
-
-            if (Longitud > MaxLongitud)
-            {
-                EliminarUltimoNodo();
-            }
-        }
-
-        public void EliminarUltimoNodo()
-        {
-            if (Cabeza == null || Cabeza.Siguiente == null)
-            {
-                Cabeza = null;
-                Longitud = 0;
-                return;
-            }
-
-            Nodo actual = Cabeza;
-            while (actual.Siguiente.Siguiente != null)
-            {
-                actual = actual.Siguiente;
-            }
-
-            actual.Siguiente = null;
-            Longitud--;
-        }
+        posiciones.Enqueue((x, y));
     }
+
+    public IEnumerable<(int X, int Y)> ObtenerPosiciones()  //Accede a todas las posiciones de la estela
+    {
+        return posiciones;
+    }
+
+    public int Longitud => posiciones.Count;
 }

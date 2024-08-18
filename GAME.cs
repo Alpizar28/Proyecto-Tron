@@ -30,7 +30,7 @@ namespace Proyecto2
         {
             Casilla posicionInicial = mapa.ObtenerCasilla(24, 26);
 
-            moto = new MOTO(10, 3, 100, new List<string>(), new List<string>(), posicionInicial);
+            moto = new MOTO(150, 3, 100, new List<string>(), new List<string>(), posicionInicial);
 
             moto.ConfigurarImagenes(
                 Properties.Resources.MotoDerecha,
@@ -46,7 +46,7 @@ namespace Proyecto2
         {
             movimientoTimer = new Timer
             {
-                Interval = 150 // Intervalo en milisegundos
+                Interval = moto.Velocidad // Intervalo en milisegundos
             };
             movimientoTimer.Tick += MoverMoto;
             movimientoTimer.Start();
@@ -66,12 +66,10 @@ namespace Proyecto2
             }
             else
             {
-                moto.Mover(nuevaPosicion);
+                moto.Mover(nuevaPosicion,mapa);
                 ActualizarPosicionMoto();
             }
         }
-
-
         private Casilla ObtenerNuevaPosicion()
         {
             Casilla nuevaPosicion = direccionActual switch
@@ -85,11 +83,30 @@ namespace Proyecto2
 
             if (nuevaPosicion == null)
             {
-                Console.WriteLine("La nueva posición es null en ObtenerNuevaPosicion.");
+                Console.WriteLine("La nueva posición es null");
             }
 
             return nuevaPosicion;
         }
+
+        private void ActualizarPosicionMoto()
+        {
+            moto.ActualizarEstela(mapa);
+
+            Image imagenActual = moto.ObtenerImagenActual(direccionActual);
+            mapa.ColocarImagenEnCelda(moto.PosicionActual.X, moto.PosicionActual.Y, imagenActual);
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.Left || keyData == Keys.Right)
+            {
+                direccionActual = keyData;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
 
         private void FinalizarJuego(string razonMuerte)
         {
@@ -115,25 +132,6 @@ namespace Proyecto2
             pantallaFin.ShowDialog();
 
             pantallaFin.Dispose(); // Libera los recursos utilizados por la pantalla de fin
-        }
-
-
-        private void ActualizarPosicionMoto()
-        {
-            moto.ActualizarEstela(mapa);
-
-            Image imagenActual = moto.ObtenerImagenActual(direccionActual);
-            mapa.ColocarImagenEnCelda(moto.PosicionActual.X, moto.PosicionActual.Y, imagenActual);
-        }
-
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.Left || keyData == Keys.Right)
-            {
-                direccionActual = keyData;
-            }
-
-            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void GAME_Load(object sender, EventArgs e)
