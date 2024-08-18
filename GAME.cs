@@ -108,7 +108,7 @@ namespace Proyecto2
             // Verifica que las coordenadas estén dentro de los límites del grid
             if (x >= 0 && x < filas && y >= 0 && y < columnas)
             {
-                gridPanels[x, y].BackColor = Color.Red;
+            gridPanels[x, y].BackColor = Color.Red;
             }
             else
             {
