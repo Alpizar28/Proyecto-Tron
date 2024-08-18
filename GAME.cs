@@ -13,6 +13,7 @@ namespace Proyecto2
         private Keys direccionActual = Keys.Up;
         private int columnas;
         private int filas;
+        private List<BOTS> bots;
 
         public GAME(int columnas, int filas)
         {
@@ -23,6 +24,7 @@ namespace Proyecto2
 
             mapa = new MAPA(filas, columnas, 20, this);  // Crear el grid en esta ventana
             InicializarMoto();
+            InicializarBots(4);  // Inicializa 4 bots
             ConfigurarTemporizador();
         }
 
@@ -39,7 +41,7 @@ namespace Proyecto2
                 Properties.Resources.MotoAbajo
             );
 
-            ActualizarPosicionMoto();
+            moto.ActualizarImagen(mapa, direccionActual);
         }
 
         private void ConfigurarTemporizador()
@@ -54,47 +56,43 @@ namespace Proyecto2
 
         private void MoverMoto(object sender, EventArgs e)
         {
-            Casilla nuevaPosicion = ObtenerNuevaPosicion();
-
-            if (!moto.EsPosicionValida(nuevaPosicion, columnas, filas))
-            {
-                FinalizarJuego("Se salió de los límites");
-            }
-            else if (moto.Combustible <= 0)
-            {
-                FinalizarJuego("Se quedó sin combustible");
-            }
-            else
-            {
-                moto.Mover(nuevaPosicion,mapa);
-                ActualizarPosicionMoto();
-            }
-        }
-        private Casilla ObtenerNuevaPosicion()
-        {
-            Casilla nuevaPosicion = direccionActual switch
-            {
-                Keys.Up => moto.PosicionActual.Arriba,
-                Keys.Down => moto.PosicionActual.Abajo,
-                Keys.Left => moto.PosicionActual.Izquierda,
-                Keys.Right => moto.PosicionActual.Derecha,
-                _ => null,
-            };
-
-            if (nuevaPosicion == null)
-            {
-                Console.WriteLine("La nueva posición es null");
-            }
-
-            return nuevaPosicion;
-        }
-
-        private void ActualizarPosicionMoto()
-        {
+            moto.Mover(direccionActual, mapa, columnas, filas);
             moto.ActualizarEstela(mapa);
+            moto.ActualizarImagen(mapa, direccionActual);
+            MoverBots(); // Mueve los bots después de mover la moto del jugador
+        }
 
-            Image imagenActual = moto.ObtenerImagenActual(direccionActual);
-            mapa.ColocarImagenEnCelda(moto.PosicionActual.X, moto.PosicionActual.Y, imagenActual);
+        private void InicializarBots(int cantidadBots)
+        {
+            bots = new List<BOTS>();
+
+            for (int i = 0; i < cantidadBots; i++)
+            {
+                int x = new Random().Next(0, columnas);
+                int y = new Random().Next(0, filas);
+                Casilla posicionInicial = mapa.ObtenerCasilla(x, y);
+
+                BOTS bot = new BOTS(150, 3, 100, new List<string>(), new List<string>(), posicionInicial);
+                bot.ConfigurarImagenes(
+                    Properties.Resources.MotoDerecha,
+                    Properties.Resources.MotoIzquierda,
+                    Properties.Resources.MotoArriba,
+                    Properties.Resources.MotoAbajo
+                );
+
+                bots.Add(bot);
+                Console.WriteLine($"Bot {i + 1} inicializado en posición ({x}, {y})");
+            }
+        }
+
+        private void MoverBots()
+        {
+            foreach (var bot in bots)
+            {
+                bot.MoverBot(mapa, columnas, filas);
+                bot.ActualizarEstela(mapa);
+                bot.ActualizarImagen(mapa, bot.ObtenerDireccionAleatoria());
+            }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -106,7 +104,6 @@ namespace Proyecto2
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
-
 
         private void FinalizarJuego(string razonMuerte)
         {

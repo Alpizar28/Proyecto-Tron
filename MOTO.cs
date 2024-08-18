@@ -40,16 +40,31 @@ namespace Proyecto2
             motoImageAbajo = abajo;
         }
 
-        public void Mover(Casilla nuevaPosicion, MAPA mapa)
+        public void Mover(Keys direccion, MAPA mapa, int columnas, int filas)
         {
-            if (Combustible > 0 && nuevaPosicion != null)
+            Casilla nuevaPosicion = ObtenerNuevaPosicion(direccion);
+            if (EsPosicionValida(nuevaPosicion, columnas, filas))
             {
-                Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
-                PosicionActual = nuevaPosicion;
-                Combustible -= 1;
+                if (Combustible > 0 && nuevaPosicion != null)
+                {
+                    Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
+                    PosicionActual = nuevaPosicion;
+                    Combustible -= 1;
+                }
             }
         }
 
+        private Casilla ObtenerNuevaPosicion(Keys direccion)
+        {
+            return direccion switch
+            {
+                Keys.Up => PosicionActual.Arriba,
+                Keys.Down => PosicionActual.Abajo,
+                Keys.Left => PosicionActual.Izquierda,
+                Keys.Right => PosicionActual.Derecha,
+                _ => null,
+            };
+        }
         public Image ObtenerImagenActual(Keys direccionActual)
         {
             return direccionActual switch
@@ -74,6 +89,12 @@ namespace Proyecto2
                             nuevaPosicion.Y >= 0 && nuevaPosicion.Y < filas;
 
             return esValida;
+        }
+
+        public void ActualizarImagen(MAPA mapa, Keys direccion)
+        {
+            Image imagenActual = ObtenerImagenActual(direccion);
+            mapa.ColocarImagenEnCelda(PosicionActual.X, PosicionActual.Y, imagenActual);
         }
 
         public void ActualizarEstela(MAPA mapa)
