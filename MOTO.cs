@@ -7,6 +7,7 @@ namespace Proyecto2
 {
     public class MOTO
     {
+        protected GAME game;
         public int Velocidad { get; set; }
         public int Tamaño_Estela { get; set; }
         public int Combustible { get; set; }
@@ -19,7 +20,7 @@ namespace Proyecto2
         private Image motoImageArriba;
         private Image motoImageAbajo;
 
-        public MOTO(int velocidad, int tamaño_estela, int combustible, List<string> items, List<string> poderes, Casilla posicionInicial)
+        public MOTO(int velocidad, int tamaño_estela, int combustible, List<string> items, List<string> poderes, Casilla posicionInicial, GAME game)
         {
             Velocidad = velocidad;
             Tamaño_Estela = tamaño_estela;
@@ -30,6 +31,7 @@ namespace Proyecto2
             Estela = new Estela(tamaño_estela);
 
             Estela.AgregarNodo(posicionInicial.X, posicionInicial.Y, null);
+            this.game = game;
         }
 
         public void ConfigurarImagenes(Image derecha, Image izquierda, Image arriba, Image abajo)
@@ -45,16 +47,24 @@ namespace Proyecto2
             Casilla nuevaPosicion = ObtenerNuevaPosicion(direccion);
             if (EsPosicionValida(nuevaPosicion, columnas, filas))
             {
-                if (Combustible > 0 && nuevaPosicion != null)
+                if (Combustible > 0)
                 {
                     Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
                     PosicionActual = nuevaPosicion;
                     Combustible -= 1;
                 }
+                else
+                {
+                    game.FinalizarJuego("Combustible agotado");
+                }
+            }
+            else
+            {
+                game.FinalizarJuego("Ubicacion invalida");
             }
         }
 
-        private Casilla ObtenerNuevaPosicion(Keys direccion)
+        public Casilla ObtenerNuevaPosicion(Keys direccion)
         {
             return direccion switch
             {

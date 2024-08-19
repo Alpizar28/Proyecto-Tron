@@ -32,7 +32,7 @@ namespace Proyecto2
         {
             Casilla posicionInicial = mapa.ObtenerCasilla(24, 26);
 
-            moto = new MOTO(150, 3, 100, new List<string>(), new List<string>(), posicionInicial);
+            moto = new MOTO(150, 13, 300, new List<string>(), new List<string>(), posicionInicial,this);
 
             moto.ConfigurarImagenes(
                 Properties.Resources.MotoDerecha,
@@ -65,14 +65,15 @@ namespace Proyecto2
         private void InicializarBots(int cantidadBots)
         {
             bots = new List<BOTS>();
+            Random random = new Random();  // Crear una sola instancia de Random
 
             for (int i = 0; i < cantidadBots; i++)
             {
-                int x = new Random().Next(0, columnas);
-                int y = new Random().Next(0, filas);
+                int x = random.Next(0, columnas);
+                int y = random.Next(0, filas);
                 Casilla posicionInicial = mapa.ObtenerCasilla(x, y);
 
-                BOTS bot = new BOTS(150, 3, 100, new List<string>(), new List<string>(), posicionInicial);
+                BOTS bot = new BOTS(150, 3, 100, new List<string>(), new List<string>(), posicionInicial, this);
                 bot.ConfigurarImagenes(
                     Properties.Resources.MotoDerecha,
                     Properties.Resources.MotoIzquierda,
@@ -85,15 +86,31 @@ namespace Proyecto2
             }
         }
 
+
         private void MoverBots()
         {
-            foreach (var bot in bots)
+            for (int i = bots.Count - 1; i >= 0; i--)
             {
-                bot.MoverBot(mapa, columnas, filas);
+                var bot = bots[i];
+                bot.MoverBot(mapa, moto, columnas, filas);
                 bot.ActualizarEstela(mapa);
                 bot.ActualizarImagen(mapa, bot.ObtenerDireccionAleatoria());
+
+                if (mapa.EsEstela(bot.PosicionActual))
+                {
+                    MatarBot(bot);  // Eliminar el bot si choca con una estela
+                }
             }
         }
+
+
+        public void MatarBot(BOTS bot)
+        {
+            bots.Remove(bot);
+            mapa.ColorearCelda(bot.PosicionActual.X, bot.PosicionActual.Y, Color.MediumPurple); // Colorea la celda para que parezca vacía
+            Console.WriteLine("Un bot ha sido eliminado.");
+        }
+
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -105,7 +122,7 @@ namespace Proyecto2
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void FinalizarJuego(string razonMuerte)
+        public void FinalizarJuego(string razonMuerte)
         {
             movimientoTimer.Stop();
             this.Close();

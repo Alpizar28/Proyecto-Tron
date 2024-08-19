@@ -62,6 +62,13 @@ namespace Proyecto2
                 Panel panel = gridPanels[y, x];
                 panel.BackColor = color;
                 panel.BackgroundImage = null;  // Restablecer la imagen para que se vea solo el color
+
+                // Marcar la casilla como parte de una estela si es de un color específico
+                Casilla casilla = Grid.ObtenerCasilla(x, y);
+                if (color == Color.SkyBlue) // Colores de estela
+                {
+                    casilla.EsParteDeEstela = true;
+                }
             }
         }
 
@@ -79,17 +86,24 @@ namespace Proyecto2
         {
             return Grid.ObtenerCasilla(x, y);
         }
+
+        public bool EsEstela(Casilla casilla)
+        {
+            return casilla.EsParteDeEstela;
+        }
     }
 
     public class Casilla
     {
-        public Casilla Arriba { get; set; }    // Referencia a la casilla arriba
-        public Casilla Abajo { get; set; }     // Referencia a la casilla abajo
-        public Casilla Izquierda { get; set; } // Referencia a la casilla izquierda
-        public Casilla Derecha { get; set; }   // Referencia a la casilla derecha
+        public Casilla Arriba { get; set; }
+        public Casilla Abajo { get; set; }
+        public Casilla Izquierda { get; set; }
+        public Casilla Derecha { get; set; }
 
         public int X { get; set; } // Posición X (columna) en el grid
         public int Y { get; set; } // Posición Y (fila) en el grid
+
+        public bool EsParteDeEstela { get; set; } = false; // Nueva propiedad para verificar si es parte de una estela
 
         public Casilla(int x, int y)
         {
