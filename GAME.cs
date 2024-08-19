@@ -7,12 +7,12 @@ namespace Proyecto2
 {
     public partial class GAME : Form
     {
-        private MOTO moto;
-        private MAPA mapa;
+        public MOTO moto { get; private set; }
+        public MAPA mapa { get; private set; }
+        public int columnas { get; private set; }
+        public int filas { get; private set; }
         private Timer movimientoTimer;
         private Keys direccionActual = Keys.Up;
-        private int columnas;
-        private int filas;
         private List<BOTS> bots;
 
         public GAME(int columnas, int filas)
@@ -32,7 +32,7 @@ namespace Proyecto2
         {
             Casilla posicionInicial = mapa.ObtenerCasilla(24, 26);
 
-            moto = new MOTO(150, 13, 300, new List<string>(), new List<string>(), posicionInicial,this);
+            moto = new MOTO(150, 13, 300, new List<string>(), new List<string>(), posicionInicial, this);
 
             moto.ConfigurarImagenes(
                 Properties.Resources.MotoDerecha,
@@ -59,13 +59,12 @@ namespace Proyecto2
             moto.Mover(direccionActual, mapa, columnas, filas);
             moto.ActualizarEstela(mapa);
             moto.ActualizarImagen(mapa, direccionActual);
-            MoverBots(); // Mueve los bots después de mover la moto del jugador
         }
 
         private void InicializarBots(int cantidadBots)
         {
             bots = new List<BOTS>();
-            Random random = new Random();  // Crear una sola instancia de Random
+            Random random = new Random(); 
 
             for (int i = 0; i < cantidadBots; i++)
             {
@@ -73,7 +72,7 @@ namespace Proyecto2
                 int y = random.Next(0, filas);
                 Casilla posicionInicial = mapa.ObtenerCasilla(x, y);
 
-                BOTS bot = new BOTS(150, 3, 100, new List<string>(), new List<string>(), posicionInicial, this);
+                BOTS bot = new BOTS(400, 3, 100, new List<string>(), new List<string>(), posicionInicial, this);
                 bot.ConfigurarImagenes(
                     Properties.Resources.BotDerecha,
                     Properties.Resources.BotIzquierda,
@@ -86,34 +85,22 @@ namespace Proyecto2
             }
         }
 
-
-        private void MoverBots()
-        {
-            for (int i = bots.Count - 1; i >= 0; i--)
-            {
-                var bot = bots[i];
-                bot.MoverBot(mapa, moto, columnas, filas);
-                bot.ActualizarEstela(mapa);
-                bot.ActualizarImagen(mapa, bot.ObtenerDireccionAleatoria());
-
-                if (mapa.EsEstela(bot.PosicionActual))
-                {
-                    MatarBot(bot);  // Eliminar el bot si choca con una estela
-                }
-            }
-        }
-
-
         public void MatarBot(BOTS bot)
         {
+            bot.DetenerBot();
             bots.Remove(bot);
             mapa.ColorearCelda(bot.PosicionActual.X, bot.PosicionActual.Y, Color.MediumPurple); // Colorea la celda para que parezca vacía
             Console.WriteLine("Un bot ha sido eliminado.");
         }
 
-
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            // Mapear WASD a las teclas de flecha correspondientes
+            if (keyData == Keys.W) keyData = Keys.Up;
+            if (keyData == Keys.S) keyData = Keys.Down;
+            if (keyData == Keys.A) keyData = Keys.Left;
+            if (keyData == Keys.D) keyData = Keys.Right;
+
             if (keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.Left || keyData == Keys.Right)
             {
                 direccionActual = keyData;
@@ -125,6 +112,13 @@ namespace Proyecto2
         public void FinalizarJuego(string razonMuerte)
         {
             movimientoTimer.Stop();
+
+            // Detener todos los bots
+            foreach (var bot in bots)
+            {
+                bot.DetenerBot();
+            }
+
             this.Close();
 
             Form pantallaFin = new Form

@@ -44,6 +44,7 @@ namespace Proyecto2
 
         public virtual void Mover(Keys direccion, MAPA mapa, int columnas, int filas)
         {
+
             Casilla nuevaPosicion = ObtenerNuevaPosicion(direccion);
             if (EsPosicionValida(nuevaPosicion, columnas, filas))
             {
