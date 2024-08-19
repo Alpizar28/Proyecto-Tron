@@ -51,7 +51,6 @@ namespace Proyecto2
             }
         }
 
-
         private Keys ObtenerMejorDireccion(MOTO jugador, MAPA mapa, int columnas, int filas)
         {
             int deltaX = jugador.PosicionActual.X - this.PosicionActual.X;
@@ -75,7 +74,6 @@ namespace Proyecto2
             {
                 return mejorDireccion;
             }
-
 
             // Si la mejor dirección no es válida, prueba otras direcciones
             var direcciones = new List<Keys> { Keys.Up, Keys.Down, Keys.Left, Keys.Right };

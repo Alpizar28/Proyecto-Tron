@@ -13,7 +13,7 @@ namespace Proyecto2
         public int Combustible { get; set; }
         public List<string> Items { get; set; }
         public List<string> Poderes { get; set; }
-        public Casilla PosicionActual { get; private set; }
+        public Casilla PosicionActual { get; protected set; }
         public Estela Estela { get; private set; }
         private Image motoImageDerecha;
         private Image motoImageIzquierda;
@@ -42,25 +42,33 @@ namespace Proyecto2
             motoImageAbajo = abajo;
         }
 
-        public void Mover(Keys direccion, MAPA mapa, int columnas, int filas)
+        public virtual void Mover(Keys direccion, MAPA mapa, int columnas, int filas)
         {
             Casilla nuevaPosicion = ObtenerNuevaPosicion(direccion);
             if (EsPosicionValida(nuevaPosicion, columnas, filas))
             {
-                if (Combustible > 0)
+                if (mapa.EsEstela(nuevaPosicion))
                 {
-                    Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
-                    PosicionActual = nuevaPosicion;
-                    Combustible -= 1;
+                    Console.WriteLine("Colisión con estela");
+                    game.FinalizarJuego("Colisión con estela");
                 }
                 else
                 {
-                    game.FinalizarJuego("Combustible agotado");
+                    if (Combustible == 0)
+                    {
+                        game.FinalizarJuego("Combustible agotado");
+                    }
+                    else
+                    {
+                        Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
+                        PosicionActual = nuevaPosicion;
+                        Combustible -= 1;
+                    }
                 }
             }
             else
             {
-                game.FinalizarJuego("Ubicacion invalida");
+                game.FinalizarJuego("Ubicación inválida");
             }
         }
 
@@ -75,6 +83,7 @@ namespace Proyecto2
                 _ => null,
             };
         }
+
         public Image ObtenerImagenActual(Keys direccionActual)
         {
             return direccionActual switch

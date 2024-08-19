@@ -130,5 +130,17 @@
   <ItemGroup>
     <None Include="Resources\MotoIzquierda.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BotAbajo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BotArriba.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BotDerecha.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\BotIzquierda.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

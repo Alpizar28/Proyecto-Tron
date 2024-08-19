@@ -75,10 +75,10 @@ namespace Proyecto2
 
                 BOTS bot = new BOTS(150, 3, 100, new List<string>(), new List<string>(), posicionInicial, this);
                 bot.ConfigurarImagenes(
-                    Properties.Resources.MotoDerecha,
-                    Properties.Resources.MotoIzquierda,
-                    Properties.Resources.MotoArriba,
-                    Properties.Resources.MotoAbajo
+                    Properties.Resources.BotDerecha,
+                    Properties.Resources.BotIzquierda,
+                    Properties.Resources.BotArriba,
+                    Properties.Resources.BotAbajo
                 );
 
                 bots.Add(bot);
