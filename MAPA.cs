@@ -69,8 +69,12 @@ namespace Proyecto2
                 {
                     casilla.EsParteDeEstela = true;
                 }
+                else if (color == Color.MediumPurple)
+                {
+                    casilla.EsParteDeEstela = false;
+                }
             }
-        }
+        }  
 
         public void ColocarImagenEnCelda(int x, int y, Image imagen)
         {

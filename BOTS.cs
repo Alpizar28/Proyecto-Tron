@@ -8,6 +8,7 @@ namespace Proyecto2
     {
         private static Random rand = new Random();
         private Timer botTimer;
+        private bool eliminado = false; // Flag para evitar múltiples eliminaciones
 
         public BOTS(int velocidad, int tamaño_estela, int combustible, List<string> items, List<string> poderes, Casilla posicionInicial, GAME game)
             : base(velocidad, tamaño_estela, combustible, items, poderes, posicionInicial, game)
@@ -27,6 +28,9 @@ namespace Proyecto2
 
         public void MoverBot(object sender, EventArgs e)
         {
+            if (eliminado)
+                return; // Evita mover el bot si ya ha sido eliminado
+
             MAPA mapa = game.mapa;
             int columnas = game.columnas;
             int filas = game.filas;
@@ -51,9 +55,9 @@ namespace Proyecto2
             // Actualizar la estela e imagen del bot
             ActualizarEstela(mapa);
             ActualizarImagen(mapa, direccion);
-
             if (mapa.EsEstela(PosicionActual))
             {
+                eliminado = true; // Marca el bot como eliminado
                 game.MatarBot(this);  // Eliminar el bot si choca con una estela
             }
         }
@@ -74,6 +78,7 @@ namespace Proyecto2
                 }
                 else
                 {
+                    eliminado = true; // Marca el bot como eliminado
                     game.MatarBot(this);  // Colisión con la estela
                 }
             }

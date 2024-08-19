@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Proyecto2.Properties;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
+using WMPLib;
 
 namespace Proyecto2
 {
@@ -87,11 +90,38 @@ namespace Proyecto2
 
         public void MatarBot(BOTS bot)
         {
+            if (bot == null || !bots.Contains(bot))
+            {
+                return; // Evita eliminar el mismo bot más de una vez
+            }
+
             bot.DetenerBot();
+
+            // Limpiar la imagen del bot en su posición actual
+            mapa.ColocarImagenEnCelda(bot.PosicionActual.X, bot.PosicionActual.Y, null);
+
+            // Limpiar todas las posiciones de la estela del bot
+            foreach (var (X, Y) in bot.Estela.ObtenerPosiciones())
+            {
+                mapa.ColorearCelda(X, Y, Color.MediumPurple);
+            }
+
+            PlayMp3File("C:\\Users\\Pablo\\OneDrive - Estudiantes ITCR\\TEC\\Semestre 2\\00 Datos\\P2\\Proyecto2\\Resources\\muerte.mp3", 20);
+
             bots.Remove(bot);
-            mapa.ColorearCelda(bot.PosicionActual.X, bot.PosicionActual.Y, Color.MediumPurple); // Colorea la celda para que parezca vacía
+
             Console.WriteLine("Un bot ha sido eliminado.");
         }
+
+
+        public void PlayMp3File(string filePath, int volumen)
+        {
+            WindowsMediaPlayer player = new WindowsMediaPlayer();
+            player.URL = filePath;
+            player.settings.volume = volumen;
+            player.controls.play();
+        }
+
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {

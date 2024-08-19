@@ -23,7 +23,7 @@ public class Estela
         posiciones.Enqueue((x, y));
     }
 
-    public IEnumerable<(int X, int Y)> ObtenerPosiciones()  //Accede a todas las posiciones de la estela
+    public IEnumerable<(int X, int Y)> ObtenerPosiciones()
     {
         return posiciones;
     }
