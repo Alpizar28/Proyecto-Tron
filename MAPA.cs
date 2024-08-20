@@ -85,6 +85,32 @@ namespace Proyecto2
                 panel.Invalidate();  // Forzar la actualización del panel
             }
         }
+        public void ColocarPoderesAleatorios(int cantidadPoderes)
+        {
+            Random random = new Random();
+            for (int i = 0; i < cantidadPoderes; i++)
+            {
+                int x = random.Next(0, columnas);
+                int y = random.Next(0, filas);
+
+                Image imagenPoder;
+                string tipoPoder = (random.Next(0, 2) == 0) ? "Escudo" : "HiperVelocidad";
+
+                if (tipoPoder == "Escudo")
+                {
+                    imagenPoder = Properties.Resources.Escudo;
+                }
+                else
+                {
+                    imagenPoder = Properties.Resources.HiperVelocidad;
+                }
+
+                ColocarImagenEnCelda(x, y, imagenPoder);
+
+                Grid.ObtenerCasilla(x, y).TipoPoder = tipoPoder;
+            }
+        }
+
 
         public Casilla ObtenerCasilla(int x, int y)
         {
@@ -95,6 +121,14 @@ namespace Proyecto2
         {
             return casilla.EsParteDeEstela;
         }
+        public bool EsPoder(Casilla casilla)
+        {
+            return casilla.TipoPoder != null;
+        }
+        public bool EsBot(Casilla casilla)
+        {
+            return casilla.EsBot;
+        } 
     }
 
     public class Casilla
@@ -108,7 +142,8 @@ namespace Proyecto2
         public int Y { get; set; } // Posición Y (fila) en el grid
 
         public bool EsParteDeEstela { get; set; } = false; // Nueva propiedad para verificar si es parte de una estela
-
+        public string TipoPoder { get; set; }
+        public bool EsBot { get; set; } = false;
         public Casilla(int x, int y)
         {
             X = x;
@@ -192,5 +227,6 @@ namespace Proyecto2
 
             return actual;
         }
+
     }
 }

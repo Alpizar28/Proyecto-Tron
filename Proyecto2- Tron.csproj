@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BOTS.cs" />
+    <Compile Include="PODERES.cs" />
     <Compile Include="ESTELA.cs" />
     <Compile Include="MOTO.cs" />
     <Compile Include="Form1.cs">
@@ -182,7 +183,9 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Escudo.png" />
     <Content Include="Resources\explosion.mp3" />
+    <None Include="Resources\HiperVelocidad.png" />
     <Content Include="Resources\muerte.mp3" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

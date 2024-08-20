@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Media;
 using System.Windows.Forms;
 using WMPLib;
 
@@ -10,11 +9,11 @@ namespace Proyecto2
 {
     public partial class GAME : Form
     {
-        public MOTO moto { get; private set; }
+        public MOTO moto { get; protected set; }
         public MAPA mapa { get; private set; }
         public int columnas { get; private set; }
         public int filas { get; private set; }
-        private Timer movimientoTimer;
+        public Timer movimientoTimer;
         private Keys direccionActual = Keys.Up;
         private List<BOTS> bots;
 
@@ -26,6 +25,7 @@ namespace Proyecto2
             this.Size = new Size(columnas * 20 + 100, filas * 20 + 100);  // Ajusta el tamaño de la ventana del juego
 
             mapa = new MAPA(filas, columnas, 20, this);  // Crear el grid en esta ventana
+            mapa.ColocarPoderesAleatorios(5); // Colocar 5 poderes aleatorios en el mapa
             InicializarMoto();
             InicializarBots(4);  // Inicializa 4 bots
             ConfigurarTemporizador();
@@ -47,8 +47,14 @@ namespace Proyecto2
             moto.ActualizarImagen(mapa, direccionActual);
         }
 
-        private void ConfigurarTemporizador()
+        public void ConfigurarTemporizador()
         {
+            if (movimientoTimer != null)
+            {
+                movimientoTimer.Stop();
+                movimientoTimer.Dispose();
+            }
+
             movimientoTimer = new Timer
             {
                 Interval = moto.Velocidad // Intervalo en milisegundos
@@ -67,7 +73,7 @@ namespace Proyecto2
         private void InicializarBots(int cantidadBots)
         {
             bots = new List<BOTS>();
-            Random random = new Random(); 
+            Random random = new Random();
 
             for (int i = 0; i < cantidadBots; i++)
             {
@@ -100,6 +106,8 @@ namespace Proyecto2
             // Limpiar la imagen del bot en su posición actual
             mapa.ColocarImagenEnCelda(bot.PosicionActual.X, bot.PosicionActual.Y, null);
 
+            bot.PosicionActual.EsBot = false;
+
             // Limpiar todas las posiciones de la estela del bot
             foreach (var (X, Y) in bot.Estela.ObtenerPosiciones())
             {
@@ -113,7 +121,6 @@ namespace Proyecto2
             Console.WriteLine("Un bot ha sido eliminado.");
         }
 
-
         public void PlayMp3File(string filePath, int volumen)
         {
             WindowsMediaPlayer player = new WindowsMediaPlayer();
@@ -121,7 +128,6 @@ namespace Proyecto2
             player.settings.volume = volumen;
             player.controls.play();
         }
-
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {

@@ -7,12 +7,12 @@ namespace Proyecto2
 {
     public class MOTO
     {
-        protected GAME game;
+        public GAME game;
         public int Velocidad { get; set; }
         public int Tamaño_Estela { get; set; }
         public int Combustible { get; set; }
         public List<string> Items { get; set; }
-        public List<string> Poderes { get; set; }
+        public Stack<string> PoderesStack { get; set; }
         public Casilla PosicionActual { get; protected set; }
         public Estela Estela { get; private set; }
         private Image motoImageDerecha;
@@ -20,18 +20,21 @@ namespace Proyecto2
         private Image motoImageArriba;
         private Image motoImageAbajo;
 
+        public bool tieneEscudo { get; set; }
+        public PODERES Poderes { get; private set; }
+
         public MOTO(int velocidad, int tamaño_estela, int combustible, List<string> items, List<string> poderes, Casilla posicionInicial, GAME game)
         {
             Velocidad = velocidad;
             Tamaño_Estela = tamaño_estela;
             Combustible = combustible;
             Items = items;
-            Poderes = poderes;
+            PoderesStack = new Stack<string>(poderes);
             PosicionActual = posicionInicial;
             Estela = new Estela(tamaño_estela);
-
             Estela.AgregarNodo(posicionInicial.X, posicionInicial.Y, null);
             this.game = game;
+            Poderes = new PODERES(this);
         }
 
         public void ConfigurarImagenes(Image derecha, Image izquierda, Image arriba, Image abajo)
@@ -44,27 +47,43 @@ namespace Proyecto2
 
         public virtual void Mover(Keys direccion, MAPA mapa, int columnas, int filas)
         {
-
             Casilla nuevaPosicion = ObtenerNuevaPosicion(direccion);
+
             if (EsPosicionValida(nuevaPosicion, columnas, filas))
             {
-                if (mapa.EsEstela(nuevaPosicion))
+                if (tieneEscudo == false)
                 {
-                    Console.WriteLine("Colisión con estela");
-                    game.FinalizarJuego("Colisión con estela");
+                    if (mapa.EsEstela(nuevaPosicion))
+                    {
+                        Console.WriteLine("Colisión con estela");
+                        game.FinalizarJuego("Colisión con estela");
+                        return;
+                    }
+                    else if (mapa.EsBot(nuevaPosicion))
+                    {
+                        Console.WriteLine("Colisión con bot");
+                        game.FinalizarJuego("Colisión con bot");
+                        return;
+                    }
+                }
+
+                // Mover la moto y verificar el combustible
+                if (Combustible == 0)
+                {
+                    game.FinalizarJuego("Combustible agotado");
                 }
                 else
                 {
-                    if (Combustible == 0)
+                    if (nuevaPosicion.TipoPoder != null)
                     {
-                        game.FinalizarJuego("Combustible agotado");
+                        Poderes.ActivarPoder(nuevaPosicion.TipoPoder);
+                        mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null); // Eliminar el poder del mapa
+                        nuevaPosicion.TipoPoder = null; // Limpiar el poder de la casilla
                     }
-                    else
-                    {
-                        Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
-                        PosicionActual = nuevaPosicion;
-                        Combustible -= 1;
-                    }
+
+                    Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
+                    PosicionActual = nuevaPosicion;
+                    Combustible -= 1;
                 }
             }
             else
@@ -72,6 +91,8 @@ namespace Proyecto2
                 game.FinalizarJuego("Ubicación inválida");
             }
         }
+
+
 
         public Casilla ObtenerNuevaPosicion(Keys direccion)
         {

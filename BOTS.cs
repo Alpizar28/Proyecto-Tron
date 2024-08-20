@@ -36,6 +36,9 @@ namespace Proyecto2
             int filas = game.filas;
             MOTO jugador = game.moto;
 
+            // Desmarcar la casilla anterior como "EsBot"
+            PosicionActual.EsBot = false;
+
             Keys direccion = ObtenerMejorDireccion(jugador, mapa, columnas, filas);
             bool movimientoExitoso = Mover_(direccion, mapa, columnas, filas);
 
@@ -52,7 +55,8 @@ namespace Proyecto2
                 }
             }
 
-            // Actualizar la estela e imagen del bot
+            PosicionActual.EsBot = true;
+
             ActualizarEstela(mapa);
             ActualizarImagen(mapa, direccion);
             if (mapa.EsEstela(PosicionActual))
@@ -68,7 +72,7 @@ namespace Proyecto2
 
             if (EsPosicionValida(nuevaPosicion, columnas, filas))
             {
-                if (!mapa.EsEstela(nuevaPosicion))
+                if (!mapa.EsEstela(nuevaPosicion) && !mapa.EsBot(nuevaPosicion))
                 {
                     Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
                     PosicionActual = nuevaPosicion;
@@ -76,7 +80,7 @@ namespace Proyecto2
 
                     return true;  // Movimiento exitoso
                 }
-                else
+                else if (mapa.EsEstela(nuevaPosicion))
                 {
                     eliminado = true; // Marca el bot como eliminado
                     game.MatarBot(this);  // Colisión con la estela
@@ -85,6 +89,7 @@ namespace Proyecto2
 
             return false;  // Movimiento fallido
         }
+
 
         public Keys ObtenerDireccionAleatoria()
         {
