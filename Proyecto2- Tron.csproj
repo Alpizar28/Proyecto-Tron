@@ -183,6 +183,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Poderes.png" />
     <None Include="Resources\Escudo.png" />
     <Content Include="Resources\explosion.mp3" />
     <None Include="Resources\HiperVelocidad.png" />

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Proyecto2
@@ -63,6 +65,41 @@ namespace Proyecto2
 
             timer.Stop();
             timer.Dispose();
+        }
+
+        public void MoverPoderArriba()
+        {
+            if (moto.PoderesStack.Count > 1)
+            {
+                var poder = moto.PoderesStack.Pop();
+                moto.PoderesStack = new Stack<string>(new[] { poder }.Concat(moto.PoderesStack));
+                moto.game.ActualizarListaPoderes();
+            }
+        }
+
+        public void MoverPoderAbajo()
+        {
+            if (moto.PoderesStack.Count > 1)
+            {
+                var poderes = moto.PoderesStack.ToArray();
+                moto.PoderesStack.Clear();
+                moto.PoderesStack.Push(poderes[poderes.Length - 1]);
+                for (int i = 0; i < poderes.Length - 1; i++)
+                {
+                    moto.PoderesStack.Push(poderes[i]);
+                }
+                moto.game.ActualizarListaPoderes();
+            }
+        }
+
+        public void AplicarPoder()
+        {
+            if (moto.PoderesStack.Count > 0)
+            {
+                var poder = moto.PoderesStack.Pop();
+                ActivarPoder(poder);
+                moto.game.ActualizarListaPoderes();
+            }
         }
     }
 }

@@ -51,40 +51,44 @@ namespace Proyecto2
 
             if (EsPosicionValida(nuevaPosicion, columnas, filas))
             {
-                if (tieneEscudo == false)
+                if (!tieneEscudo)
                 {
                     if (mapa.EsEstela(nuevaPosicion))
                     {
                         Console.WriteLine("Colisión con estela");
                         game.FinalizarJuego("Colisión con estela");
-                        return;
                     }
                     else if (mapa.EsBot(nuevaPosicion))
                     {
                         Console.WriteLine("Colisión con bot");
                         game.FinalizarJuego("Colisión con bot");
-                        return;
                     }
-                }
+                    else if (Combustible == 0)
+                    {
+                        game.FinalizarJuego("Combustible agotado");
+                    }
+                    else
+                    {
+                        if (nuevaPosicion.TipoPoder != null)
+                        {
+                            PoderesStack.Push(nuevaPosicion.TipoPoder);
+                            game.ActualizarListaPoderes();
+                            mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
+                            nuevaPosicion.TipoPoder = null;
+                        }
 
-                // Mover la moto y verificar el combustible
-                if (Combustible == 0)
-                {
-                    game.FinalizarJuego("Combustible agotado");
+                        Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
+                        PosicionActual = nuevaPosicion;
+                        Combustible -= 1;
+                    }
                 }
                 else
                 {
-                    if (nuevaPosicion.TipoPoder != null)
-                    {
-                        Poderes.ActivarPoder(nuevaPosicion.TipoPoder);
-                        mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null); // Eliminar el poder del mapa
-                        nuevaPosicion.TipoPoder = null; // Limpiar el poder de la casilla
-                    }
-
                     Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
                     PosicionActual = nuevaPosicion;
                     Combustible -= 1;
                 }
+
             }
             else
             {
@@ -92,6 +96,27 @@ namespace Proyecto2
             }
         }
 
+
+        public void SoltarItemsYPoderes()
+        {
+            Random random = new Random();
+
+            foreach (var poder in PoderesStack)
+            {
+                int x = random.Next(0, game.columnas);
+                int y = random.Next(0, game.filas);
+                Casilla casilla = game.mapa.ObtenerCasilla(x, y);
+
+                if (casilla != null && !casilla.EsParteDeEstela && casilla.TipoPoder == null)
+                {
+                    game.mapa.ColocarImagenEnCelda(x, y, Properties.Resources.Poderes);
+                    casilla.TipoPoder = poder;
+                }
+            }
+            // Limpiar los ítems y poderes de la moto
+            Items.Clear();
+            PoderesStack.Clear();
+        }
 
 
         public Casilla ObtenerNuevaPosicion(Keys direccion)
