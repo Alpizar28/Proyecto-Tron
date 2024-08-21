@@ -70,26 +70,61 @@ namespace Proyecto2
         {
             Casilla nuevaPosicion = ObtenerNuevaPosicion(direccion);
 
-            if (EsPosicionValida(nuevaPosicion, columnas, filas))
+            if (!EsPosicionValida(nuevaPosicion, columnas, filas))
             {
-                if (!mapa.EsEstela(nuevaPosicion) && !mapa.EsBot(nuevaPosicion))
+                return false; // La nueva posición no es válida, no se realiza el movimiento
+            }
+
+            // Si la nueva posición es una estela o contiene otro bot
+            if (mapa.EsEstela(nuevaPosicion) || mapa.EsBot(nuevaPosicion))
+            {
+                if (tieneEscudo)
                 {
+                    // El bot tiene escudo, ignora la colisión
+                    // Avanza a la nueva posición y continúa el juego
                     Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
                     PosicionActual = nuevaPosicion;
                     Combustible -= 1;
-
-                    return true;  // Movimiento exitoso
+                    return true;
                 }
-                else if (mapa.EsEstela(nuevaPosicion))
+                else
                 {
-                    eliminado = true; // Marca el bot como eliminado
-                    game.MatarBot(this);  // Colisión con la estela
+                    // El bot no tiene escudo, es eliminado
+                    eliminado = true;
+                    game.MatarBot(this);
+                    return false;
                 }
             }
 
-            return false;  // Movimiento fallido
+            // Si la nueva posición contiene un poder
+            if (mapa.EsPoder(nuevaPosicion))
+            {
+                AplicarPoderBot(nuevaPosicion.TipoPoder);
+                nuevaPosicion.TipoPoder = null;
+                mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
+            }
+
+            // Mueve el bot a la nueva posición
+            Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
+            PosicionActual = nuevaPosicion;
+            Combustible -= 1;
+
+            return true; // Movimiento exitoso
         }
 
+
+
+        public void AplicarPoderBot(string tipoPoder)
+        {
+            if (tipoPoder == "Escudo")
+            {
+                Poderes.ActivarEscudo();
+            }
+            else if (tipoPoder == "HiperVelocidad")
+            {
+                Poderes.ActivarHiperVelocidad();
+            }
+        }
 
         public Keys ObtenerDireccionAleatoria()
         {

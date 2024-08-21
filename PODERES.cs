@@ -30,41 +30,58 @@ namespace Proyecto2
             }
         }
 
-        private void ActivarEscudo()
+        public void ActivarEscudo()
         {
             moto.tieneEscudo = true;
+
+            if (escudoTimer != null)
+            {
+                escudoTimer.Stop();
+                escudoTimer.Dispose();
+            }
+
             escudoTimer = new Timer();
             escudoTimer.Interval = 7500; // Escudo dura exactamente 7.5 segundos
-            escudoTimer.Tick += Timer_Tick;
+            escudoTimer.Tick += (sender, e) =>
+            {
+                moto.tieneEscudo = false;
+                escudoTimer.Stop();
+                escudoTimer.Dispose();
+            };
             escudoTimer.Start();
         }
 
-        private void ActivarHiperVelocidad()
+
+        public void ActivarHiperVelocidad()
         {
+            if (velocidadTimer != null)
+            {
+                velocidadTimer.Stop();
+                velocidadTimer.Dispose();
+            }
+
+            moto.Velocidad = velocidadOriginal / 4; // Aumentar la velocidad (dividir el intervalo para hacer que el bot se mueva más rápido)
+            moto.game.ConfigurarTemporizador(); // Reconfigura el temporizador para reflejar la nueva velocidad
+
             velocidadTimer = new Timer();
-            moto.Velocidad = velocidadOriginal / 2; // Velocidad 2 veces mayor
-            moto.game.ConfigurarTemporizador(); // Actualiza el temporizador de movimiento en la clase GAME
-            velocidadTimer.Interval = 7500; // HiperVelocidad dura 7.5 segundos
-            velocidadTimer.Tick += Timer_Tick;
+            velocidadTimer.Interval = 7500; // La hiper velocidad dura 7.5 segundos
+            velocidadTimer.Tick += (sender, e) =>
+            {
+                moto.Velocidad = velocidadOriginal; // Restaurar la velocidad original después de que termine la hiper velocidad
+                moto.game.ConfigurarTemporizador(); // Reconfigura el temporizador para volver a la velocidad normal
+                velocidadTimer.Stop();
+                velocidadTimer.Dispose();
+            };
             velocidadTimer.Start();
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        public void ActualizarListaPoderes()
         {
-            Timer timer = (Timer)sender;
-
-            if (timer == escudoTimer)
+            moto.game.listaPoderes.Items.Clear();
+            foreach (var poder in moto.PoderesStack)
             {
-                moto.tieneEscudo = false;
+                moto.game.listaPoderes.Items.Add(poder);
             }
-            else if (timer == velocidadTimer)
-            {
-                moto.Velocidad = velocidadOriginal;
-                moto.game.ConfigurarTemporizador(); // Restaurar el temporizador de movimiento en GAME
-            }
-
-            timer.Stop();
-            timer.Dispose();
         }
 
         public void MoverPoderArriba()
@@ -73,7 +90,7 @@ namespace Proyecto2
             {
                 var poder = moto.PoderesStack.Pop();
                 moto.PoderesStack = new Stack<string>(new[] { poder }.Concat(moto.PoderesStack));
-                moto.game.ActualizarListaPoderes();
+                ActualizarListaPoderes();
             }
         }
 
@@ -88,7 +105,7 @@ namespace Proyecto2
                 {
                     moto.PoderesStack.Push(poderes[i]);
                 }
-                moto.game.ActualizarListaPoderes();
+                ActualizarListaPoderes();
             }
         }
 
@@ -98,7 +115,7 @@ namespace Proyecto2
             {
                 var poder = moto.PoderesStack.Pop();
                 ActivarPoder(poder);
-                moto.game.ActualizarListaPoderes();
+                ActualizarListaPoderes();
             }
         }
     }

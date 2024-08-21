@@ -4,23 +4,27 @@ using System.Drawing;
 
 public class Estela
 {
-    private Queue<(int X, int Y)> posiciones;
+    private LinkedList<(int X, int Y)> posiciones;
     public int MaxLongitud { get; set; }
 
     public Estela(int maxLongitud)
     {
-        posiciones = new Queue<(int, int)>();
+        posiciones = new LinkedList<(int, int)>();
         MaxLongitud = maxLongitud;
     }
 
     public void AgregarNodo(int x, int y, MAPA mapa)
     {
-        if (posiciones.Count >= MaxLongitud)
+        // Agrega un nuevo nodo al final de la lista (la nueva posición)
+        posiciones.AddLast((x, y));
+
+        // Si la longitud de la estela supera la longitud máxima, elimina el primer nodo
+        if (posiciones.Count > MaxLongitud)
         {
-            var nodoEliminado = posiciones.Dequeue();
+            var nodoEliminado = posiciones.First.Value;
+            posiciones.RemoveFirst(); // Elimina el nodo del inicio de la lista
             mapa.ColorearCelda(nodoEliminado.X, nodoEliminado.Y, Color.MediumPurple);
         }
-        posiciones.Enqueue((x, y));
     }
 
     public IEnumerable<(int X, int Y)> ObtenerPosiciones()

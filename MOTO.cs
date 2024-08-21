@@ -72,7 +72,7 @@ namespace Proyecto2
                         if (nuevaPosicion.TipoPoder != null)
                         {
                             PoderesStack.Push(nuevaPosicion.TipoPoder);
-                            game.ActualizarListaPoderes();
+                            Poderes.ActualizarListaPoderes();
                             mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
                             nuevaPosicion.TipoPoder = null;
                         }
@@ -99,25 +99,24 @@ namespace Proyecto2
 
         public void SoltarItemsYPoderes()
         {
-            Random random = new Random();
-
-            foreach (var poder in PoderesStack)
+            if (PoderesStack.Count > 0)
             {
-                int x = random.Next(0, game.columnas);
-                int y = random.Next(0, game.filas);
-                Casilla casilla = game.mapa.ObtenerCasilla(x, y);
+                Random random = new Random();
 
-                if (casilla != null && !casilla.EsParteDeEstela && casilla.TipoPoder == null)
+                foreach (var poder in PoderesStack)
                 {
-                    game.mapa.ColocarImagenEnCelda(x, y, Properties.Resources.Poderes);
-                    casilla.TipoPoder = poder;
+                    int x = random.Next(0, game.columnas);
+                    int y = random.Next(0, game.filas);
+                    Casilla casilla = game.mapa.ObtenerCasilla(x, y);
+
+                    if (casilla != null && !casilla.EsParteDeEstela && casilla.TipoPoder == null)
+                    {
+                        game.mapa.ColocarImagenEnCelda(x, y, Properties.Resources.Poderes);
+                        casilla.TipoPoder = poder;
+                    }
                 }
             }
-            // Limpiar los ítems y poderes de la moto
-            Items.Clear();
-            PoderesStack.Clear();
         }
-
 
         public Casilla ObtenerNuevaPosicion(Keys direccion)
         {

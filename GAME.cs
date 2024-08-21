@@ -17,23 +17,24 @@ namespace Proyecto2
         public Timer movimientoTimer;
         private Keys direccionActual = Keys.Up;
         private List<BOTS> bots;
-        private ListBox listaPoderes;
+        public ListBox listaPoderes;
 
         public GAME(int columnas, int filas)
         {
             InitializeComponent();
             this.columnas = columnas;
             this.filas = filas;
-            this.Size = new Size(columnas * 20 + 100, filas * 20 + 170);  // Ajusta el tamaño de la ventana del juego
+            this.Size = new Size(columnas * 20 + 100, filas * 20 + 170);  // tamaño de la ventana del juego
 
             mapa = new MAPA(filas, columnas, 20, this);  // Crear el grid en esta ventana
-            mapa.ColocarPoderesAleatorios(5); // Colocar 5 poderes aleatorios en el mapa
+            mapa.ColocarPoderesAleatorios(15); //5 poderes aleatorios en el mapa
             InicializarMoto();
             InicializarBots(4);  // Inicializa 4 bots
             ConfigurarTemporizador();
 
             InicializarListaPoderes();
-            ActualizarListaPoderes();
+            moto.Poderes.ActualizarListaPoderes();
+
         }
 
         private void InicializarMoto()
@@ -98,6 +99,20 @@ namespace Proyecto2
                 Console.WriteLine($"Bot {i + 1} inicializado en posición ({x}, {y})");
             }
         }
+        private void InicializarListaPoderes()
+        {
+            listaPoderes = new ListBox
+            {
+                Size = new Size(200, 60)  // Tamaño del ListBox
+            };
+
+            int x = 40;
+            int y = this.ClientSize.Height - listaPoderes.Height - 10;
+
+            listaPoderes.Location = new Point(x, y);
+
+            this.Controls.Add(listaPoderes);
+        }
 
         public void MatarBot(BOTS bot)
         {
@@ -147,7 +162,7 @@ namespace Proyecto2
             if (keyData == Keys.D1)
             {
                 moto.Poderes.MoverPoderArriba();
-                return true; 
+                return true;
             }
             else if (keyData == Keys.D2)
             {
@@ -158,7 +173,7 @@ namespace Proyecto2
             else if (keyData == Keys.Enter)
             {
                 moto.Poderes.AplicarPoder();
-                return true; 
+                return true;
             }
 
             if (keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.Left || keyData == Keys.Right)
@@ -167,32 +182,6 @@ namespace Proyecto2
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
-        }
-
-
-        private void InicializarListaPoderes()
-        {
-            listaPoderes = new ListBox
-            {
-                Size = new Size(200, 60)  // Tamaño del ListBox
-            };
-
-            int x = 40;  
-            int y = this.ClientSize.Height - listaPoderes.Height - 10;  
-
-            listaPoderes.Location = new Point(x, y);
-
-            this.Controls.Add(listaPoderes);
-        }
-
-
-        public void ActualizarListaPoderes()
-        {
-            listaPoderes.Items.Clear();
-            foreach (var poder in moto.PoderesStack)
-            {
-                listaPoderes.Items.Add(poder);
-            }
         }
 
         public void FinalizarJuego(string razonMuerte)
