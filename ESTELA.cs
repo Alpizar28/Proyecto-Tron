@@ -26,6 +26,10 @@ public class Estela
             mapa.ColorearCelda(nodoEliminado.X, nodoEliminado.Y, Color.MediumPurple);
         }
     }
+    public void IncrementarMaxLongitud(int incremento)
+    {
+        MaxLongitud += incremento;
+    }
 
     public IEnumerable<(int X, int Y)> ObtenerPosiciones()
     {

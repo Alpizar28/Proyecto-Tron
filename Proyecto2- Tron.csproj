@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BOTS.cs" />
+    <Compile Include="ITEM.cs" />
     <Compile Include="PODERES.cs" />
     <Compile Include="ESTELA.cs" />
     <Compile Include="MOTO.cs" />
@@ -187,6 +188,8 @@
     <None Include="Resources\Poderes.png" />
     <None Include="Resources\Escudo.png" />
     <None Include="Resources\EscudoMuerto.png" />
+    <None Include="Resources\Bomba.png" />
+    <None Include="Resources\Combustible.png" />
     <Content Include="Resources\explosion.mp3" />
     <None Include="Resources\HiperVelocidad.png" />
     <None Include="Resources\HiperVelocidadMuerto.png" />

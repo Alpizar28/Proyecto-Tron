@@ -27,7 +27,8 @@ namespace Proyecto2
             this.Size = new Size(columnas * 20 + 100, filas * 20 + 170);  // tamaño de la ventana del juego
 
             mapa = new MAPA(filas, columnas, 20, this);  // Crear el grid en esta ventana
-            mapa.ColocarPoderesAleatorios(15); //5 poderes aleatorios en el mapa
+            mapa.ColocarPoderesAleatorios(10); //5 poderes aleatorios en el mapa
+            mapa.ColocarItemsAleatorios(10);
             InicializarMoto();
             InicializarBots(4);  // Inicializa 4 bots
             ConfigurarTemporizador();
@@ -41,7 +42,7 @@ namespace Proyecto2
         {
             Casilla posicionInicial = mapa.ObtenerCasilla(24, 26);
 
-            moto = new MOTO(150, 13, 300, new List<string>(), new List<string>(), posicionInicial, this);
+            moto = new MOTO(150, 3, 300, new List<string>(), new List<string>(), posicionInicial, this);
 
             moto.ConfigurarImagenes(
                 Properties.Resources.MotoDerecha,
@@ -140,6 +141,10 @@ namespace Proyecto2
             bots.Remove(bot);
 
             Console.WriteLine("Un bot ha sido eliminado.");
+            if (bots.Count == 0)
+            {
+                MostrarPantallaVictoria(); // Mostrar pantalla de victoria
+            }
         }
 
         public void PlayMp3File(string filePath, int volumen)
@@ -215,6 +220,33 @@ namespace Proyecto2
             pantallaFin.ShowDialog();
 
             pantallaFin.Dispose(); // Libera los recursos utilizados por la pantalla de fin
+        }
+
+        private void MostrarPantallaVictoria()
+        {
+            movimientoTimer.Stop();
+
+            this.Close(); // Cerrar el juego actual
+
+            Form pantallaVictoria = new Form
+            {
+                Text = "¡VICTORIA!",
+                Size = new Size(400, 300),
+                StartPosition = FormStartPosition.CenterScreen
+            };
+
+            Label label = new Label
+            {
+                Text = "¡Felicidades! Has eliminado a todos los bots.",
+                Font = new Font("Arial", 24, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Fill
+            };
+
+            pantallaVictoria.Controls.Add(label);
+            pantallaVictoria.ShowDialog();
+
+            pantallaVictoria.Dispose(); // Libera los recursos utilizados por la pantalla de victoria
         }
 
         private void GAME_Load(object sender, EventArgs e)

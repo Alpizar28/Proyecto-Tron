@@ -111,6 +111,38 @@ namespace Proyecto2
             }
         }
 
+        public void ColocarItemsAleatorios(int cantidadItems)
+        {
+            Random random = new Random();
+            for (int i = 0; i < cantidadItems; i++)
+            {
+                int x = random.Next(0, columnas);
+                int y = random.Next(0, filas);
+
+                Image imagenItem;
+                int randomValue = random.Next(0, 3);
+                string tipoItem = randomValue == 0 ? "Combustible" : randomValue == 1 ? "Estela" : "Bomba";
+
+                if (tipoItem == "Combustible")
+                {
+                    imagenItem = Properties.Resources.Combustible;
+                }
+                else if (tipoItem == "Estela")
+                {
+                    imagenItem = Properties.Resources.Poderes;
+                }
+                else
+                {
+                    imagenItem = Properties.Resources.Bomba;
+                }
+
+
+                ColocarImagenEnCelda(x, y, imagenItem);
+
+                Grid.ObtenerCasilla(x, y).TipoItem = tipoItem;
+            }
+        }
+
 
         public Casilla ObtenerCasilla(int x, int y)
         {
@@ -143,6 +175,7 @@ namespace Proyecto2
 
         public bool EsParteDeEstela { get; set; } = false; // Nueva propiedad para verificar si es parte de una estela
         public string TipoPoder { get; set; }
+        public string TipoItem { get; set; }
         public bool EsBot { get; set; } = false;
         public Casilla(int x, int y)
         {
