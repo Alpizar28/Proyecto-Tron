@@ -123,6 +123,16 @@ namespace Proyecto2.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap EscudoMuerto {
+            get {
+                object obj = ResourceManager.GetObject("EscudoMuerto", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap foto2 {
             get {
                 object obj = ResourceManager.GetObject("foto2", resourceCulture);
@@ -136,6 +146,16 @@ namespace Proyecto2.Properties {
         internal static System.Drawing.Bitmap HiperVelocidad {
             get {
                 object obj = ResourceManager.GetObject("HiperVelocidad", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap HiperVelocidadMuerto {
+            get {
+                object obj = ResourceManager.GetObject("HiperVelocidadMuerto", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

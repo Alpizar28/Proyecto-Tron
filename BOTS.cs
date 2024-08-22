@@ -1,30 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace Proyecto2
 {
     public class BOTS : MOTO
     {
+        public Stack<string> BotPoderesStack { get; private set; } 
         private static Random rand = new Random();
         private Timer botTimer;
-        private bool eliminado = false; // Flag para evitar múltiples eliminaciones
+        private bool eliminado = false; 
+        private PODERESBOT poderesBot;
 
         public BOTS(int velocidad, int tamaño_estela, int combustible, List<string> items, List<string> poderes, Casilla posicionInicial, GAME game)
             : base(velocidad, tamaño_estela, combustible, items, poderes, posicionInicial, game)
         {
+            BotPoderesStack = new Stack<string>();
+            poderesBot = new PODERESBOT(this);
             ConfigurarTemporizador();
         }
 
-        private void ConfigurarTemporizador()
+        public void ConfigurarTemporizador()
         {
+            if (botTimer != null)
+            {
+                botTimer.Stop();
+                botTimer.Dispose();
+            }
+
             botTimer = new Timer
             {
-                Interval = Velocidad // Intervalo en milisegundos específico para este bot
+                Interval = Velocidad
             };
-            botTimer.Tick += MoverBot; // Asociar el evento de movimiento del bot
+            botTimer.Tick += MoverBot;
             botTimer.Start();
         }
+
+
 
         public void MoverBot(object sender, EventArgs e)
         {
@@ -72,31 +85,24 @@ namespace Proyecto2
 
             if (!EsPosicionValida(nuevaPosicion, columnas, filas))
             {
-                return false; // La nueva posición no es válida, no se realiza el movimiento
+                return false;
             }
 
-            // Si la nueva posición es una estela o contiene otro bot
             if (mapa.EsEstela(nuevaPosicion) || mapa.EsBot(nuevaPosicion))
             {
                 if (tieneEscudo)
                 {
-                    // El bot tiene escudo, ignora la colisión
-                    // Avanza a la nueva posición y continúa el juego
-                    Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
-                    PosicionActual = nuevaPosicion;
-                    Combustible -= 1;
+                    MovimientoEfectivo(mapa, nuevaPosicion);
                     return true;
                 }
                 else
                 {
-                    // El bot no tiene escudo, es eliminado
                     eliminado = true;
                     game.MatarBot(this);
                     return false;
                 }
             }
 
-            // Si la nueva posición contiene un poder
             if (mapa.EsPoder(nuevaPosicion))
             {
                 AplicarPoderBot(nuevaPosicion.TipoPoder);
@@ -104,26 +110,50 @@ namespace Proyecto2
                 mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
             }
 
-            // Mueve el bot a la nueva posición
-            Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
-            PosicionActual = nuevaPosicion;
-            Combustible -= 1;
+            MovimientoEfectivo(mapa, nuevaPosicion);
 
             return true; // Movimiento exitoso
         }
 
-
-
         public void AplicarPoderBot(string tipoPoder)
         {
-            if (tipoPoder == "Escudo")
+            BotPoderesStack.Push(tipoPoder); 
+            poderesBot.ActivarPoder(tipoPoder);
+        }
+
+        public void SoltarItemsYPoderes()
+        {
+            if (BotPoderesStack.Count == 0) return;
+
+            Random random = new Random();
+
+            while (BotPoderesStack.Count > 0)
             {
-                Poderes.ActivarEscudo();
+                string poder = BotPoderesStack.Pop();
+                bool poderColocado = false;
+
+                while (!poderColocado)
+                {
+                    int x = random.Next(0, game.columnas);
+                    int y = random.Next(0, game.filas);
+                    Casilla casilla = game.mapa.ObtenerCasilla(x, y);
+
+                    if (casilla != null && !casilla.EsParteDeEstela && casilla.TipoPoder == null && !casilla.EsBot)
+                    {
+                        Image imagenPoder = ObtenerImagenPoder(poder);
+                        game.mapa.ColocarImagenEnCelda(x, y, imagenPoder);
+                        casilla.TipoPoder = poder;
+                        poderColocado = true;
+                    }
+                }
             }
-            else if (tipoPoder == "HiperVelocidad")
-            {
-                Poderes.ActivarHiperVelocidad();
-            }
+        }
+
+        private Image ObtenerImagenPoder(string tipoPoder)
+        {
+            if (tipoPoder == "Escudo") return Properties.Resources.Escudo;
+            else if (tipoPoder == "HiperVelocidad") return Properties.Resources.HiperVelocidad;
+            else return null;
         }
 
         public Keys ObtenerDireccionAleatoria()

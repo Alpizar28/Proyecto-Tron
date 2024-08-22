@@ -32,6 +32,7 @@ namespace Proyecto2
 
         public void ActivarEscudo()
         {
+            Console.WriteLine("Escudo activado para el jugador");
             moto.tieneEscudo = true;
 
             if (escudoTimer != null)
@@ -47,6 +48,7 @@ namespace Proyecto2
                 moto.tieneEscudo = false;
                 escudoTimer.Stop();
                 escudoTimer.Dispose();
+                Console.WriteLine("Escudo desactivado para el jugador");    
             };
             escudoTimer.Start();
         }
@@ -60,15 +62,15 @@ namespace Proyecto2
                 velocidadTimer.Dispose();
             }
 
-            moto.Velocidad = velocidadOriginal / 4; // Aumentar la velocidad (dividir el intervalo para hacer que el bot se mueva más rápido)
-            moto.game.ConfigurarTemporizador(); // Reconfigura el temporizador para reflejar la nueva velocidad
+            moto.Velocidad = velocidadOriginal / 4; 
+            moto.game.ConfigurarTemporizador();
 
             velocidadTimer = new Timer();
-            velocidadTimer.Interval = 7500; // La hiper velocidad dura 7.5 segundos
+            velocidadTimer.Interval = 7500; 
             velocidadTimer.Tick += (sender, e) =>
             {
-                moto.Velocidad = velocidadOriginal; // Restaurar la velocidad original después de que termine la hiper velocidad
-                moto.game.ConfigurarTemporizador(); // Reconfigura el temporizador para volver a la velocidad normal
+                moto.Velocidad = velocidadOriginal; 
+                moto.game.ConfigurarTemporizador(); 
                 velocidadTimer.Stop();
                 velocidadTimer.Dispose();
             };

@@ -121,7 +121,7 @@ namespace Proyecto2
                 return; // Evita eliminar el mismo bot más de una vez
             }
 
-            moto.SoltarItemsYPoderes();
+            bot.SoltarItemsYPoderes();
             bot.DetenerBot();
 
             // Limpiar la imagen del bot en su posición actual

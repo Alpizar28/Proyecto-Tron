@@ -79,6 +79,7 @@
       <DependentUpon>INICIO.cs</DependentUpon>
     </Compile>
     <Compile Include="MAPA.cs" />
+    <Compile Include="PODERESBOT.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -185,8 +186,10 @@
   <ItemGroup>
     <None Include="Resources\Poderes.png" />
     <None Include="Resources\Escudo.png" />
+    <None Include="Resources\EscudoMuerto.png" />
     <Content Include="Resources\explosion.mp3" />
     <None Include="Resources\HiperVelocidad.png" />
+    <None Include="Resources\HiperVelocidadMuerto.png" />
     <Content Include="Resources\muerte.mp3" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

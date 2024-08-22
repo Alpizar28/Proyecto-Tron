@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 
 namespace Proyecto2
@@ -49,73 +50,53 @@ namespace Proyecto2
         {
             Casilla nuevaPosicion = ObtenerNuevaPosicion(direccion);
 
-            if (EsPosicionValida(nuevaPosicion, columnas, filas))
-            {
-                if (!tieneEscudo)
-                {
-                    if (mapa.EsEstela(nuevaPosicion))
-                    {
-                        Console.WriteLine("Colisión con estela");
-                        game.FinalizarJuego("Colisión con estela");
-                    }
-                    else if (mapa.EsBot(nuevaPosicion))
-                    {
-                        Console.WriteLine("Colisión con bot");
-                        game.FinalizarJuego("Colisión con bot");
-                    }
-                    else if (Combustible == 0)
-                    {
-                        game.FinalizarJuego("Combustible agotado");
-                    }
-                    else
-                    {
-                        if (nuevaPosicion.TipoPoder != null)
-                        {
-                            PoderesStack.Push(nuevaPosicion.TipoPoder);
-                            Poderes.ActualizarListaPoderes();
-                            mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
-                            nuevaPosicion.TipoPoder = null;
-                        }
-
-                        Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
-                        PosicionActual = nuevaPosicion;
-                        Combustible -= 1;
-                    }
-                }
-                else
-                {
-                    Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
-                    PosicionActual = nuevaPosicion;
-                    Combustible -= 1;
-                }
-
-            }
-            else
+            if (!EsPosicionValida(nuevaPosicion, columnas, filas))
             {
                 game.FinalizarJuego("Ubicación inválida");
+                return;
+            }
+
+            if (Combustible == 0)
+            {
+                game.FinalizarJuego("Te quedaste sin gasolina");
+                return;
+            }
+
+            if (mapa.EsEstela(nuevaPosicion) || mapa.EsBot(nuevaPosicion))
+            {
+                ManejarColision();
+                return;
+            }
+
+            if (nuevaPosicion.TipoPoder != null)
+            {
+                ManejarPoderEncontrado(nuevaPosicion, mapa);
+            }
+
+            MovimientoEfectivo(mapa, nuevaPosicion);
+        }
+
+        private void ManejarColision()
+        {
+            if (!tieneEscudo)
+            {
+                game.FinalizarJuego("Has muerto");
             }
         }
 
-
-        public void SoltarItemsYPoderes()
+        public void ManejarPoderEncontrado(Casilla nuevaPosicion, MAPA mapa)
         {
-            if (PoderesStack.Count > 0)
-            {
-                Random random = new Random();
+            PoderesStack.Push(nuevaPosicion.TipoPoder);
+            Poderes.ActualizarListaPoderes();
+            mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
+            nuevaPosicion.TipoPoder = null;
+        }
 
-                foreach (var poder in PoderesStack)
-                {
-                    int x = random.Next(0, game.columnas);
-                    int y = random.Next(0, game.filas);
-                    Casilla casilla = game.mapa.ObtenerCasilla(x, y);
-
-                    if (casilla != null && !casilla.EsParteDeEstela && casilla.TipoPoder == null)
-                    {
-                        game.mapa.ColocarImagenEnCelda(x, y, Properties.Resources.Poderes);
-                        casilla.TipoPoder = poder;
-                    }
-                }
-            }
+        public void MovimientoEfectivo(MAPA mapa, Casilla nuevaPosicion)
+        {
+            Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
+            PosicionActual = nuevaPosicion;
+            Combustible -= 1;
         }
 
         public Casilla ObtenerNuevaPosicion(Keys direccion)
