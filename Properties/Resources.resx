@@ -121,6 +121,9 @@
   <data name="Bomba" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Bomba.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Bomba1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Bomba.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="BotAbajo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\BotAbajo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -145,8 +148,14 @@
   <data name="EscudoMuerto" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\EscudoMuerto.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="explosion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\explosion.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="foto2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\foto2.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Game_over" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Game_over.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="HiperVelocidad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HiperVelocidad.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -166,16 +175,25 @@
   <data name="MotoIzquierda" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\MotoIzquierda.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="muerte" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\muerte.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Poderes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Poderes.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Start_screen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Start_screen.jpeg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="TNT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TNT.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="TRON" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TRON.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="TRON_start_screen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TRON_start_screen.jpeg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="win" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\win.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

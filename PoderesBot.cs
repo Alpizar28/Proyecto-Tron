@@ -52,11 +52,6 @@ namespace Proyecto2
                 if (bot.BotPoderesStack.Count > 0)
                 {
                     bot.BotPoderesStack.Pop();
-                    Console.WriteLine("Escudo desactivado para el bot.");
-                }
-                else
-                {
-                    Console.WriteLine("No se puede hacer Pop en una pila vacía.");
                 }
             };
             escudoTimer.Start();
@@ -88,7 +83,10 @@ namespace Proyecto2
                 bot.ConfigurarTemporizador(); // Reconfigura el timer con la velocidad original
                 velocidadTimer.Stop();
                 velocidadTimer.Dispose();
-                bot.BotPoderesStack.Pop();
+                if (bot.BotPoderesStack.Count > 0)
+                {
+                    bot.BotPoderesStack.Pop();
+                }
             };
             velocidadTimer.Start();
         }

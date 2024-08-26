@@ -195,6 +195,7 @@ namespace Proyecto2
                 }
 
                 siguienteItem.Aplicar(this);
+                game.PlayMp3File("Item");
             }
         }
 
@@ -204,10 +205,10 @@ namespace Proyecto2
             int margen = 3;
             int bombaX = PosicionActual.X;
             int bombaY = PosicionActual.Y;
-
+            game.PlayMp3File("TNT");
+            Image ImagenBomba = Properties.Resources.Bomba1;
             Task.Delay(3000).ContinueWith(_ =>
             {
-                game.mapa.ColorearCelda(bombaX, bombaY, Color.Orange);
 
                 for (int x = bombaX - margen; x <= bombaX + margen; x++)
                 {
@@ -223,10 +224,9 @@ namespace Proyecto2
                             }
                         }
 
-                        game.mapa.ColorearCelda(x, y, Color.Orange);
+                        game.mapa.ColocarImagenEnCelda(x, y, ImagenBomba);
                     }
                 }
-                game.PlayMp3File("explosion.mp3", 60);
 
                 Task.Delay(2000).ContinueWith(__ =>
                 {
@@ -235,7 +235,7 @@ namespace Proyecto2
                     {
                         for (int y = bombaY - margen; y <= bombaY + margen; y++)
                         {
-                            game.mapa.ColorearCelda(x, y, Color.MediumPurple); 
+                            game.mapa.ColocarImagenEnCelda(x, y, null); 
                         }
                     }
                 });

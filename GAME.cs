@@ -1,8 +1,10 @@
 ﻿using Proyecto2.Properties;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Windows.Forms;
 using WMPLib;
 
@@ -19,7 +21,7 @@ namespace Proyecto2
         public List<BOTS> bots;
         public ListBox listaPoderes;
         public Label combustibleLabel { get; private set; }
-
+        private WindowsMediaPlayer player = new WindowsMediaPlayer();
 
         public GAME(int columnas, int filas)
         {
@@ -173,7 +175,7 @@ namespace Proyecto2
                 mapa.ColorearCelda(X, Y, Color.MediumPurple);
             }
 
-            PlayMp3File("C:\\Users\\Pablo\\OneDrive - Estudiantes ITCR\\TEC\\Semestre 2\\00 Datos\\P2\\Proyecto2\\Resources\\muerte.mp3", 20);
+            PlayMp3File("muerte");
 
             bots.Remove(bot);
 
@@ -183,14 +185,20 @@ namespace Proyecto2
                 MostrarPantallaVictoria(); // Mostrar pantalla de victoria
             }
         }
-
-        public void PlayMp3File(string filePath, int volumen)
+        public void PlayMp3File(string filePath)
         {
-            WindowsMediaPlayer player = new WindowsMediaPlayer();
-            player.URL = filePath;
-            player.settings.volume = volumen;
-            player.controls.play();
+            try
+            {
+                SoundPlayer player = new SoundPlayer((System.IO.Stream)Properties.Resources.ResourceManager.GetObject(filePath));
+                player.Play();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al reproducir el sonido: {ex.Message}");
+            }
         }
+
+
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
@@ -228,6 +236,7 @@ namespace Proyecto2
 
         public void FinalizarJuego(string razonMuerte)
         {
+            PlayMp3File("Game_over");
             movimientoTimer.Stop();
 
             // Detener todos los bots
@@ -261,6 +270,7 @@ namespace Proyecto2
 
         private void MostrarPantallaVictoria()
         {
+            PlayMp3File("win");
             movimientoTimer.Stop();
 
             this.Close(); // Cerrar el juego actual

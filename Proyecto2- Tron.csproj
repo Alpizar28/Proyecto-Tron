@@ -185,15 +185,31 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\win.mp3" />
     <None Include="Resources\Poderes.png" />
     <None Include="Resources\Escudo.png" />
     <None Include="Resources\EscudoMuerto.png" />
     <None Include="Resources\Bomba.png" />
     <None Include="Resources\Combustible.png" />
-    <Content Include="Resources\explosion.mp3" />
+    <None Include="Resources\Bomba.jpg" />
     <None Include="Resources\HiperVelocidad.png" />
     <None Include="Resources\HiperVelocidadMuerto.png" />
-    <Content Include="Resources\muerte.mp3" />
+    <None Include="Resources\Explosion.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\explosion.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Game_over.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\muerte.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TNT.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\win.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
