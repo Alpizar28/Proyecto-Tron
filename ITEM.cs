@@ -48,14 +48,20 @@ namespace Proyecto2
             if (moto.Combustible < moto.CombustibleMaximo)
             {
                 int incremento = Math.Min(Valor, moto.CombustibleMaximo - moto.Combustible);
+                if (incremento < 0)
+                {
+                    incremento = 0; // Asegúrate de que el incremento no sea negativo
+                }
                 moto.Combustible += incremento;
-                Console.WriteLine($"Celda de combustible aplicada: {incremento} unidades. Combustible actual: {moto.Combustible}");
+                moto.game.ActualizarCombustible();
+                Console.WriteLine($"Celda de combustible aplicada: {incremento} unidades");
             }
             else
             {
-                Console.WriteLine("Combustible lleno, celda de combustible no aplicada.");
+                Console.WriteLine("Combustible lleno"  );
             }
         }
+
 
         private void AplicarCrecimientoEstela(MOTO moto)
         {

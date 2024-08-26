@@ -160,7 +160,7 @@ namespace Proyecto2
         public bool EsBot(Casilla casilla)
         {
             return casilla.EsBot;
-        } 
+        }
     }
 
     public class Casilla
@@ -173,7 +173,7 @@ namespace Proyecto2
         public int X { get; set; } // Posición X (columna) en el grid
         public int Y { get; set; } // Posición Y (fila) en el grid
 
-        public bool EsParteDeEstela { get; set; } = false; // Nueva propiedad para verificar si es parte de una estela
+        public bool EsParteDeEstela { get; set; } = false;
         public string TipoPoder { get; set; }
         public string TipoItem { get; set; }
         public bool EsBot { get; set; } = false;

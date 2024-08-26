@@ -16,8 +16,10 @@ namespace Proyecto2
         public int filas { get; private set; }
         public Timer movimientoTimer;
         private Keys direccionActual = Keys.Up;
-        private List<BOTS> bots;
+        public List<BOTS> bots;
         public ListBox listaPoderes;
+        public Label combustibleLabel { get; private set; }
+
 
         public GAME(int columnas, int filas)
         {
@@ -32,7 +34,7 @@ namespace Proyecto2
             InicializarMoto();
             InicializarBots(4);  // Inicializa 4 bots
             ConfigurarTemporizador();
-
+            MostrarCombustible();
             InicializarListaPoderes();
             moto.Poderes.ActualizarListaPoderes();
 
@@ -113,6 +115,41 @@ namespace Proyecto2
             listaPoderes.Location = new Point(x, y);
 
             this.Controls.Add(listaPoderes);
+        }
+        public void ActualizarCombustible()
+        {
+            if (moto.Combustible <= 0)
+            {
+                FinalizarJuego("Te has quedado sin combustible");
+            }
+
+            // Asegurarse de que la actualización ocurra en el hilo correcto
+            if (combustibleLabel.InvokeRequired)
+            {
+                combustibleLabel.Invoke(new Action(() =>
+                {
+                    combustibleLabel.Text = $"Combustible: {moto.Combustible}";
+                }));
+            }
+            else
+            {
+                combustibleLabel.Text = $"Combustible: {moto.Combustible}";
+            }
+        }
+
+        private void MostrarCombustible()
+        {
+            combustibleLabel = new Label
+            {
+                Text = $"Combustible: {moto.Combustible}",
+                Font = new Font("Arial", 12, FontStyle.Bold),
+                ForeColor = Color.Black,
+                BackColor = Color.White,
+                AutoSize = true,
+                Location = new Point(300, this.ClientSize.Height - 50) // Adjust location as needed
+            };
+
+            this.Controls.Add(combustibleLabel);
         }
 
         public void MatarBot(BOTS bot)

@@ -103,6 +103,19 @@ namespace Proyecto2
                 }
             }
 
+            if (nuevaPosicion.TipoItem != null)
+            {
+                if (nuevaPosicion.TipoItem == "Combustible")
+                {
+                    mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
+                    nuevaPosicion.TipoItem = null;
+                }
+                ITEM item = new ITEM(nuevaPosicion.TipoItem);
+                ColaItems.Enqueue(item); 
+                mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
+                nuevaPosicion.TipoItem = null;
+            }
+
             if (mapa.EsPoder(nuevaPosicion))
             {
                 AplicarPoderBot(nuevaPosicion.TipoPoder);

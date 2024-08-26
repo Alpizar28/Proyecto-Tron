@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
+using System.Linq;
 using System.Timers; // Usando específicamente System.Timers
 using System.Windows.Forms;
 
@@ -12,7 +14,7 @@ namespace Proyecto2
         public int Velocidad { get; set; }
         public int Tamaño_Estela { get; set; }
         public int Combustible { get; set; }
-        public int CombustibleMaximo { get; private set; } = 100;
+        public int CombustibleMaximo { get; private set; } = 300;
         public Queue<ITEM> ColaItems { get; private set; }
 
         private System.Timers.Timer itemTimer; // Especifica System.Timers.Timer
@@ -120,6 +122,7 @@ namespace Proyecto2
             Estela.AgregarNodo(PosicionActual.X, PosicionActual.Y, mapa);
             PosicionActual = nuevaPosicion;
             Combustible -= 1;
+            game.ActualizarCombustible();
         }
 
         public Casilla ObtenerNuevaPosicion(Keys direccion)
@@ -184,19 +187,62 @@ namespace Proyecto2
             if (ColaItems.Count > 0)
             {
                 ITEM siguienteItem = ColaItems.Dequeue();
-                siguienteItem.Aplicar(this); // Aplicar el ítem
 
-                if (siguienteItem.Tipo == "Combustible" && Combustible == CombustibleMaximo)
+                if (siguienteItem.Tipo == "Combustible" && Combustible >= CombustibleMaximo)
                 {
-                    ColaItems.Enqueue(siguienteItem); // Reinsertar en la cola si el combustible está lleno
-                    Console.WriteLine("Combustible lleno, celda de combustible reinserta en la cola.");
+                    Console.WriteLine("Combustible lleno, celda de combustible no aplicada.");
+                    return; // Evita reinsertar y no aplicar el ítem si el combustible ya está lleno
                 }
+
+                siguienteItem.Aplicar(this);
             }
         }
 
+
         public void Explotar()
         {
-            Console.WriteLine("¡La moto ha explotado!");
+            int margen = 3;
+            int bombaX = PosicionActual.X;
+            int bombaY = PosicionActual.Y;
+
+            Task.Delay(3000).ContinueWith(_ =>
+            {
+                game.mapa.ColorearCelda(bombaX, bombaY, Color.Orange);
+
+                for (int x = bombaX - margen; x <= bombaX + margen; x++)
+                {
+                    for (int y = bombaY - margen; y <= bombaY + margen; y++)
+                    {
+                        Casilla casilla = game.mapa.ObtenerCasilla(x, y);
+                        if (casilla != null && game.mapa.EsBot(casilla))
+                        {
+                            BOTS bot = game.bots.FirstOrDefault(b => b.PosicionActual == casilla);
+                            if (bot != null)
+                            {
+                                game.MatarBot(bot);
+                            }
+                        }
+
+                        game.mapa.ColorearCelda(x, y, Color.Orange);
+                    }
+                }
+                game.PlayMp3File("explosion.mp3", 60);
+
+                Task.Delay(2000).ContinueWith(__ =>
+                {
+                    // Revertir el color de las celdas afectadas
+                    for (int x = bombaX - margen; x <= bombaX + margen; x++)
+                    {
+                        for (int y = bombaY - margen; y <= bombaY + margen; y++)
+                        {
+                            game.mapa.ColorearCelda(x, y, Color.MediumPurple); 
+                        }
+                    }
+                });
+            });
         }
+
+
+
     }
 }

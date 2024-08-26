@@ -49,7 +49,15 @@ namespace Proyecto2
                 escudoTimer.Stop();
                 escudoTimer.Dispose();
                 Console.WriteLine("Escudo desactivado para el bot");
-                bot.BotPoderesStack.Pop();
+                if (bot.BotPoderesStack.Count > 0)
+                {
+                    bot.BotPoderesStack.Pop();
+                    Console.WriteLine("Escudo desactivado para el bot.");
+                }
+                else
+                {
+                    Console.WriteLine("No se puede hacer Pop en una pila vacía.");
+                }
             };
             escudoTimer.Start();
         }
