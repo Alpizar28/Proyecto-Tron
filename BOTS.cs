@@ -88,7 +88,7 @@ namespace Proyecto2
                 return false;
             }
 
-            if (mapa.EsEstela(nuevaPosicion) || mapa.EsBot(nuevaPosicion))
+            if (mapa.EsEstela(nuevaPosicion) || mapa.EsBot(nuevaPosicion) || mapa.EsBomba(nuevaPosicion))
             {
                 if (tieneEscudo)
                 {
@@ -105,13 +105,10 @@ namespace Proyecto2
 
             if (nuevaPosicion.TipoItem != null)
             {
-                if (nuevaPosicion.TipoItem == "Combustible")
-                {
-                    mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
-                    nuevaPosicion.TipoItem = null;
-                }
-                ITEM item = new ITEM(nuevaPosicion.TipoItem);
-                ColaItems.Enqueue(item); 
+                ITEM nuevoItem = new ITEM(nuevaPosicion.TipoItem);
+                nuevoItem.Aplicar(this);
+
+                // Limpiar la casilla después de aplicar el ítem
                 mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
                 nuevaPosicion.TipoItem = null;
             }

@@ -31,7 +31,7 @@ namespace Proyecto2
             this.Size = new Size(columnas * 20 + 100, filas * 20 + 170);  // tamaño de la ventana del juego
 
             mapa = new MAPA(filas, columnas, 20, this);  // Crear el grid en esta ventana
-            mapa.ColocarPoderesAleatorios(10); //5 poderes aleatorios en el mapa
+            mapa.ColocarPoderesAleatorios(10); 
             mapa.ColocarItemsAleatorios(10);
             InicializarMoto();
             InicializarBots(4);  // Inicializa 4 bots
@@ -92,7 +92,7 @@ namespace Proyecto2
                 int y = random.Next(0, filas);
                 Casilla posicionInicial = mapa.ObtenerCasilla(x, y);
 
-                BOTS bot = new BOTS(400, 3, 100, new List<string>(), new List<string>(), posicionInicial, this);
+                BOTS bot = new BOTS(300, 3, 100, new List<string>(), new List<string>(), posicionInicial, this);
                 bot.ConfigurarImagenes(
                     Properties.Resources.BotDerecha,
                     Properties.Resources.BotIzquierda,
@@ -164,16 +164,17 @@ namespace Proyecto2
             bot.SoltarItemsYPoderes();
             bot.DetenerBot();
 
+            // Limpiar todas las posiciones de la estela del bot
+            bot.Estela.LimpiarEstela(mapa);
+
             // Limpiar la imagen del bot en su posición actual
             mapa.ColocarImagenEnCelda(bot.PosicionActual.X, bot.PosicionActual.Y, null);
-
             bot.PosicionActual.EsBot = false;
 
-            // Limpiar todas las posiciones de la estela del bot
-            foreach (var (X, Y) in bot.Estela.ObtenerPosiciones())
-            {
-                mapa.ColorearCelda(X, Y, Color.MediumPurple);
-            }
+            var cabeza = bot.PosicionActual;
+            mapa.ColocarImagenEnCelda(cabeza.X, cabeza.Y, null);
+            cabeza.EsParteDeEstela = false;
+            cabeza.EsBot = false;
 
             PlayMp3File("muerte");
 
@@ -185,6 +186,8 @@ namespace Proyecto2
                 MostrarPantallaVictoria(); // Mostrar pantalla de victoria
             }
         }
+
+
         public void PlayMp3File(string filePath)
         {
             try
@@ -273,28 +276,60 @@ namespace Proyecto2
             PlayMp3File("win");
             movimientoTimer.Stop();
 
-            this.Close(); // Cerrar el juego actual
-
-            Form pantallaVictoria = new Form
+            // Invocar en el hilo principal para evitar InvalidOperationException
+            if (this.InvokeRequired)
             {
-                Text = "¡VICTORIA!",
-                Size = new Size(400, 300),
-                StartPosition = FormStartPosition.CenterScreen
-            };
+                this.Invoke(new Action(() =>
+                {
+                    this.Close(); // Cerrar el juego actual
 
-            Label label = new Label
+                    Form pantallaVictoria = new Form
+                    {
+                        Text = "¡VICTORIA!",
+                        Size = new Size(400, 300),
+                        StartPosition = FormStartPosition.CenterScreen
+                    };
+
+                    Label label = new Label
+                    {
+                        Text = "¡Felicidades! Has eliminado a todos los bots.",
+                        Font = new Font("Arial", 24, FontStyle.Bold),
+                        TextAlign = ContentAlignment.MiddleCenter,
+                        Dock = DockStyle.Fill
+                    };
+
+                    pantallaVictoria.Controls.Add(label);
+                    pantallaVictoria.ShowDialog();
+
+                    pantallaVictoria.Dispose(); // Libera los recursos utilizados por la pantalla de victoria
+                }));
+            }
+            else
             {
-                Text = "¡Felicidades! Has eliminado a todos los bots.",
-                Font = new Font("Arial", 24, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter,
-                Dock = DockStyle.Fill
-            };
+                this.Close(); // Cerrar el juego actual
 
-            pantallaVictoria.Controls.Add(label);
-            pantallaVictoria.ShowDialog();
+                Form pantallaVictoria = new Form
+                {
+                    Text = "¡VICTORIA!",
+                    Size = new Size(400, 300),
+                    StartPosition = FormStartPosition.CenterScreen
+                };
 
-            pantallaVictoria.Dispose(); // Libera los recursos utilizados por la pantalla de victoria
+                Label label = new Label
+                {
+                    Text = "¡Felicidades! Has eliminado a todos los bots.",
+                    Font = new Font("Arial", 24, FontStyle.Bold),
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Dock = DockStyle.Fill
+                };
+
+                pantallaVictoria.Controls.Add(label);
+                pantallaVictoria.ShowDialog();
+
+                pantallaVictoria.Dispose(); // Libera los recursos utilizados por la pantalla de victoria
+            }
         }
+
 
         private void GAME_Load(object sender, EventArgs e)
         {

@@ -73,6 +73,12 @@ namespace Proyecto2
                 return;
             }
 
+            if (nuevaPosicion.EsBomba)  // Verificar si la nueva posición tiene una bomba
+            {
+                game.FinalizarJuego("Has explotado con una bomba");
+                return;
+            }
+
             if (mapa.EsEstela(nuevaPosicion) || mapa.EsBot(nuevaPosicion))
             {
                 ManejarColision();
@@ -207,40 +213,41 @@ namespace Proyecto2
             int bombaY = PosicionActual.Y;
             game.PlayMp3File("TNT");
             Image ImagenBomba = Properties.Resources.Bomba1;
+
             Task.Delay(3000).ContinueWith(_ =>
             {
-
                 for (int x = bombaX - margen; x <= bombaX + margen; x++)
                 {
                     for (int y = bombaY - margen; y <= bombaY + margen; y++)
                     {
                         Casilla casilla = game.mapa.ObtenerCasilla(x, y);
-                        if (casilla != null && game.mapa.EsBot(casilla))
+                        if (casilla != null)
                         {
-                            BOTS bot = game.bots.FirstOrDefault(b => b.PosicionActual == casilla);
-                            if (bot != null)
-                            {
-                                game.MatarBot(bot);
-                            }
+                            casilla.EsBomba = true; 
+                            game.mapa.ColocarImagenEnCelda(x, y, ImagenBomba);
                         }
-
-                        game.mapa.ColocarImagenEnCelda(x, y, ImagenBomba);
                     }
                 }
 
                 Task.Delay(2000).ContinueWith(__ =>
                 {
-                    // Revertir el color de las celdas afectadas
+                    // Revertir el estado de las celdas afectadas
                     for (int x = bombaX - margen; x <= bombaX + margen; x++)
                     {
                         for (int y = bombaY - margen; y <= bombaY + margen; y++)
                         {
-                            game.mapa.ColocarImagenEnCelda(x, y, null); 
+                            Casilla casilla = game.mapa.ObtenerCasilla(x, y);
+                            if (casilla != null)
+                            {
+                                casilla.EsBomba = false;
+                                game.mapa.ColocarImagenEnCelda(x, y, null);
+                            }
                         }
                     }
                 });
             });
         }
+
 
 
 

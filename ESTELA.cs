@@ -26,6 +26,7 @@ public class Estela
             mapa.ColorearCelda(nodoEliminado.X, nodoEliminado.Y, Color.MediumPurple);
         }
     }
+
     public void IncrementarMaxLongitud(int incremento)
     {
         MaxLongitud += incremento;
@@ -37,4 +38,25 @@ public class Estela
     }
 
     public int Longitud => posiciones.Count;
+
+    public void LimpiarEstela(MAPA mapa)
+    {
+        foreach (var (X, Y) in posiciones)
+        {
+            mapa.ColorearCelda(X, Y, Color.MediumPurple);
+            Casilla casilla = mapa.ObtenerCasilla(X, Y);
+            casilla.EsParteDeEstela = false;  
+        }
+
+        posiciones.Clear();  // Limpiar la lista de posiciones
+
+        if (posiciones.Count > 0)
+        {
+            var cabeza = posiciones.Last.Value;
+            mapa.ColocarImagenEnCelda(cabeza.X, cabeza.Y, null);
+            Casilla casillaCabeza = mapa.ObtenerCasilla(cabeza.X, cabeza.Y);
+            casillaCabeza.EsBot = false;
+        }
+    }
+
 }

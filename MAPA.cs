@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Proyecto2
@@ -85,9 +86,10 @@ namespace Proyecto2
                 panel.Invalidate();  // Forzar la actualización del panel
             }
         }
-        public void ColocarPoderesAleatorios(int cantidadPoderes)
+        public async Task ColocarPoderesAleatorios(int cantidadPoderes)
         {
             Random random = new Random();
+
             for (int i = 0; i < cantidadPoderes; i++)
             {
                 int x = random.Next(0, columnas);
@@ -108,10 +110,13 @@ namespace Proyecto2
                 ColocarImagenEnCelda(x, y, imagenPoder);
 
                 Grid.ObtenerCasilla(x, y).TipoPoder = tipoPoder;
+                Console.WriteLine(tipoPoder);
+                // Esperar 30 segundos antes de colocar el siguiente poder
+                await Task.Delay(10000);
             }
         }
 
-        public void ColocarItemsAleatorios(int cantidadItems)
+        public async Task ColocarItemsAleatorios(int cantidadItems)
         {
             Random random = new Random();
             for (int i = 0; i < cantidadItems; i++)
@@ -140,6 +145,9 @@ namespace Proyecto2
                 ColocarImagenEnCelda(x, y, imagenItem);
 
                 Grid.ObtenerCasilla(x, y).TipoItem = tipoItem;
+                Console.WriteLine(tipoItem);
+                await Task.Delay(10000); // 30000 milisegundos = 30 segundos
+
             }
         }
 
@@ -161,6 +169,10 @@ namespace Proyecto2
         {
             return casilla.EsBot;
         }
+        public bool EsBomba(Casilla casilla)
+        {
+            return casilla.EsBomba;
+        }
     }
 
     public class Casilla
@@ -177,6 +189,7 @@ namespace Proyecto2
         public string TipoPoder { get; set; }
         public string TipoItem { get; set; }
         public bool EsBot { get; set; } = false;
+        public bool EsBomba { get; set; } = false;
         public Casilla(int x, int y)
         {
             X = x;
