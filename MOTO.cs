@@ -94,8 +94,9 @@ namespace Proyecto2
             {
                 ManejarItemsEncontrados(nuevaPosicion, mapa);
             }
-
+            PosicionActual.EsParteDeEstela = false;
             MovimientoEfectivo(mapa, nuevaPosicion);
+            PosicionActual.EsParteDeEstela = true;
         }
 
         private void ManejarItemsEncontrados(Casilla nuevaPosicion, MAPA mapa)

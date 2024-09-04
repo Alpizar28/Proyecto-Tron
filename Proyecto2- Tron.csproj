@@ -211,5 +211,8 @@
   <ItemGroup>
     <None Include="Resources\win.wav" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\futuristic_background.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

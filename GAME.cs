@@ -1,12 +1,10 @@
-﻿using Proyecto2.Properties;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Media;
 using System.Windows.Forms;
+using System;
 using WMPLib;
+
 
 namespace Proyecto2
 {
@@ -19,8 +17,13 @@ namespace Proyecto2
         public Timer movimientoTimer;
         private Keys direccionActual = Keys.Up;
         public List<BOTS> bots;
-        public ListBox listaPoderes;
-        public Label combustibleLabel { get; private set; }
+        public FlowLayoutPanel panelPoderes;
+        private ProgressBar progressBarCombustible;
+        private Panel panelTotal;
+        private PictureBox pictureBoxCombustible;
+        private Panel panelCombustible;
+
+
         private WindowsMediaPlayer player = new WindowsMediaPlayer();
 
         public GAME(int columnas, int filas)
@@ -29,15 +32,18 @@ namespace Proyecto2
             this.columnas = columnas;
             this.filas = filas;
             this.Size = new Size(columnas * 20 + 100, filas * 20 + 170);  // tamaño de la ventana del juego
+            Image backgroundImage = Properties.Resources.futuristic_background;
+            this.BackgroundImage = backgroundImage;
+            this.BackgroundImageLayout = ImageLayout.Stretch;  // Ajusta la imagen para que cubra todo el fondo
 
             mapa = new MAPA(filas, columnas, 20, this);  // Crear el grid en esta ventana
-            mapa.ColocarPoderesAleatorios(10); 
+            mapa.ColocarPoderesAleatorios(10);
             mapa.ColocarItemsAleatorios(10);
             InicializarMoto();
-            InicializarBots(4);  // Inicializa 4 bots
+            InicializarBots(4);
             ConfigurarTemporizador();
             MostrarCombustible();
-            InicializarListaPoderes();
+            InicializarPanelPoderes();
             moto.Poderes.ActualizarListaPoderes();
 
         }
@@ -104,55 +110,96 @@ namespace Proyecto2
                 Console.WriteLine($"Bot {i + 1} inicializado en posición ({x}, {y})");
             }
         }
-        private void InicializarListaPoderes()
+
+        private void InicializarPanelPoderes()
         {
-            listaPoderes = new ListBox
+            panelPoderes = new FlowLayoutPanel
             {
-                Size = new Size(200, 60)  // Tamaño del ListBox
+                Size = new Size(300, 60),  // Tamaño del panel
+                AutoScroll = true,         // Activar scroll si hay muchos poderes
+                FlowDirection = FlowDirection.LeftToRight
             };
 
             int x = 40;
-            int y = this.ClientSize.Height - listaPoderes.Height - 10;
+            int y = this.ClientSize.Height - 70;
 
-            listaPoderes.Location = new Point(x, y);
-
-            this.Controls.Add(listaPoderes);
+            panelPoderes.Location = new Point(x, y);
+            this.Controls.Add(panelPoderes);
         }
+
         public void ActualizarCombustible()
         {
             if (moto.Combustible <= 0)
             {
                 FinalizarJuego("Te has quedado sin combustible");
+                return;
             }
 
-            // Asegurarse de que la actualización ocurra en el hilo correcto
-            if (combustibleLabel.InvokeRequired)
+            // Verificar si el método se ejecuta en un hilo diferente y usar Invoke si es necesario
+            if (panelCombustible.InvokeRequired)
             {
-                combustibleLabel.Invoke(new Action(() =>
+                panelCombustible.Invoke(new Action(() =>
                 {
-                    combustibleLabel.Text = $"Combustible: {moto.Combustible}";
+                    ActualizarBarraCombustible();
                 }));
             }
             else
             {
-                combustibleLabel.Text = $"Combustible: {moto.Combustible}";
+                ActualizarBarraCombustible();
             }
         }
 
-        private void MostrarCombustible()
+        private void ActualizarBarraCombustible()
         {
-            combustibleLabel = new Label
+            // Calcular el porcentaje de combustible restante
+            double porcentajeCombustible = (double)moto.Combustible / moto.CombustibleMaximo * 100;
+
+            // Ajustar el tamaño del Panel según el porcentaje
+            panelCombustible.Width = (int)(200 * (porcentajeCombustible / 100));
+
+            if (porcentajeCombustible <= 25)
             {
-                Text = $"Combustible: {moto.Combustible}",
-                Font = new Font("Arial", 12, FontStyle.Bold),
-                ForeColor = Color.Black,
-                BackColor = Color.White,
-                AutoSize = true,
-                Location = new Point(300, this.ClientSize.Height - 50) // Adjust location as needed
+                panelCombustible.BackColor = Color.Red;
+            }
+            else if (porcentajeCombustible <= 50)
+            {
+                panelCombustible.BackColor = Color.Yellow;
+            }
+            else
+            {
+                panelCombustible.BackColor = Color.Green;
+            }
+        }
+
+
+
+        public void MostrarCombustible()
+        {
+            pictureBoxCombustible = new PictureBox
+            {
+                Image = Properties.Resources.Combustible,
+                Size = new Size(50, 50),
+                Location = new Point(795, this.ClientSize.Height - 70),
+                SizeMode = PictureBoxSizeMode.StretchImage
             };
 
-            this.Controls.Add(combustibleLabel);
+            panelCombustible = new Panel
+            {
+                Size = new Size(200, 30),
+                Location = new Point(800, this.ClientSize.Height - 60),
+                BackColor = Color.Green // Comienza en verde
+            };
+            panelTotal = new Panel
+            {
+                Size = new Size(200, 30),
+                Location = new Point(800, this.ClientSize.Height - 60),
+                BackColor = Color.Gray
+            };
+            this.Controls.Add(pictureBoxCombustible);
+            this.Controls.Add(panelCombustible);
+            this.Controls.Add(panelTotal);
         }
+
 
         public void MatarBot(BOTS bot)
         {
@@ -161,32 +208,25 @@ namespace Proyecto2
                 return; // Evita eliminar el mismo bot más de una vez
             }
 
-            bot.SoltarItemsYPoderes();
-            bot.DetenerBot();
+            bot.SoltarItemsYPoderes(); // Suelta los ítems y poderes del bot
+            bot.DetenerBot(); // Detiene el movimiento del bot
 
-            // Limpiar todas las posiciones de la estela del bot
             bot.Estela.LimpiarEstela(mapa);
-
-            // Limpiar la imagen del bot en su posición actual
-            mapa.ColocarImagenEnCelda(bot.PosicionActual.X, bot.PosicionActual.Y, null);
-            bot.PosicionActual.EsBot = false;
 
             var cabeza = bot.PosicionActual;
             mapa.ColocarImagenEnCelda(cabeza.X, cabeza.Y, null);
-            cabeza.EsParteDeEstela = false;
             cabeza.EsBot = false;
 
             PlayMp3File("muerte");
-
             bots.Remove(bot);
 
             Console.WriteLine("Un bot ha sido eliminado.");
+
             if (bots.Count == 0)
             {
-                MostrarPantallaVictoria(); // Mostrar pantalla de victoria
+                MostrarPantallaVictoria();
             }
         }
-
 
         public void PlayMp3File(string filePath)
         {
@@ -201,17 +241,13 @@ namespace Proyecto2
             }
         }
 
-
-
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            // Mapear WASD a las teclas de flecha correspondientes
             if (keyData == Keys.W) keyData = Keys.Up;
             if (keyData == Keys.S) keyData = Keys.Down;
             if (keyData == Keys.A) keyData = Keys.Left;
             if (keyData == Keys.D) keyData = Keys.Right;
 
-            // Mover poderes en la pila usando 1 y 2
             if (keyData == Keys.D1)
             {
                 moto.Poderes.MoverPoderArriba();
@@ -222,7 +258,6 @@ namespace Proyecto2
                 moto.Poderes.MoverPoderAbajo();
                 return true;
             }
-            // Aplicar poder usando Enter
             else if (keyData == Keys.Enter)
             {
                 moto.Poderes.AplicarPoder();
@@ -242,7 +277,6 @@ namespace Proyecto2
             PlayMp3File("Game_over");
             movimientoTimer.Stop();
 
-            // Detener todos los bots
             foreach (var bot in bots)
             {
                 bot.DetenerBot();
@@ -268,7 +302,7 @@ namespace Proyecto2
             pantallaFin.Controls.Add(label);
             pantallaFin.ShowDialog();
 
-            pantallaFin.Dispose(); // Libera los recursos utilizados por la pantalla de fin
+            pantallaFin.Dispose();
         }
 
         private void MostrarPantallaVictoria()
@@ -276,12 +310,11 @@ namespace Proyecto2
             PlayMp3File("win");
             movimientoTimer.Stop();
 
-            // Invocar en el hilo principal para evitar InvalidOperationException
             if (this.InvokeRequired)
             {
                 this.Invoke(new Action(() =>
                 {
-                    this.Close(); // Cerrar el juego actual
+                    this.Close();
 
                     Form pantallaVictoria = new Form
                     {
@@ -300,13 +333,12 @@ namespace Proyecto2
 
                     pantallaVictoria.Controls.Add(label);
                     pantallaVictoria.ShowDialog();
-
-                    pantallaVictoria.Dispose(); // Libera los recursos utilizados por la pantalla de victoria
+                    pantallaVictoria.Dispose();
                 }));
             }
             else
             {
-                this.Close(); // Cerrar el juego actual
+                this.Close();
 
                 Form pantallaVictoria = new Form
                 {
@@ -325,12 +357,9 @@ namespace Proyecto2
 
                 pantallaVictoria.Controls.Add(label);
                 pantallaVictoria.ShowDialog();
-
-                pantallaVictoria.Dispose(); // Libera los recursos utilizados por la pantalla de victoria
+                pantallaVictoria.Dispose();
             }
         }
-
-
         private void GAME_Load(object sender, EventArgs e)
         {
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -79,12 +80,37 @@ namespace Proyecto2
 
         public void ActualizarListaPoderes()
         {
-            moto.game.listaPoderes.Items.Clear();
+            moto.game.panelPoderes.Controls.Clear();  // Limpiar el panel visual de poderes
+
             foreach (var poder in moto.PoderesStack)
             {
-                moto.game.listaPoderes.Items.Add(poder);
+                PictureBox pictureBoxPoder = new PictureBox
+                {
+                    Size = new Size(50, 50),  // Tamaño de la imagen del poder
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+                    Image = ObtenerImagenPoder(poder),  // Obtener la imagen correspondiente al poder
+                    BorderStyle = BorderStyle.FixedSingle
+                };
+
+                // Agregar el control visual al panel
+                moto.game.panelPoderes.Controls.Add(pictureBoxPoder);
             }
         }
+
+        // Método para obtener la imagen del poder
+        private Image ObtenerImagenPoder(string poder)
+        {
+            if (poder == "Escudo")
+            {
+                return Properties.Resources.EscudoMuerto;  // Asume que tienes una imagen llamada EscudoIcon en los recursos
+            }
+            else if (poder == "HiperVelocidad")
+            {
+                return Properties.Resources.HiperVelocidad;  // Asume que tienes una imagen llamada HiperVelocidadIcon en los recursos
+            }
+            return null;  // Imagen por defecto en caso de que el poder no tenga una imagen asociada
+        }
+
 
         public void MoverPoderArriba()
         {
