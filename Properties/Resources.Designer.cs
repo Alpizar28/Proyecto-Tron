@@ -201,6 +201,16 @@ namespace Proyecto2.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GameOverBackground {
+            get {
+                object obj = ResourceManager.GetObject("GameOverBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap HiperVelocidad {
             get {
                 object obj = ResourceManager.GetObject("HiperVelocidad", resourceCulture);
@@ -259,6 +269,46 @@ namespace Proyecto2.Properties {
         }
         
         /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MotoPoderAbajo {
+            get {
+                object obj = ResourceManager.GetObject("MotoPoderAbajo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MotoPoderArriba {
+            get {
+                object obj = ResourceManager.GetObject("MotoPoderArriba", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MotoPoderDerecha {
+            get {
+                object obj = ResourceManager.GetObject("MotoPoderDerecha", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MotoPoderIzquierda {
+            get {
+                object obj = ResourceManager.GetObject("MotoPoderIzquierda", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Busca un recurso adaptado de tipo System.IO.UnmanagedMemoryStream similar a System.IO.MemoryStream.
         /// </summary>
         internal static System.IO.UnmanagedMemoryStream muerte {
@@ -312,6 +362,16 @@ namespace Proyecto2.Properties {
         internal static System.Drawing.Bitmap TRON_start_screen {
             get {
                 object obj = ResourceManager.GetObject("TRON_start_screen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap VictoryBackground {
+            get {
+                object obj = ResourceManager.GetObject("VictoryBackground", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

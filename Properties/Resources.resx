@@ -157,6 +157,9 @@
   <data name="futuristic_background" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\futuristic_background.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="GameOverBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GameOverBackground.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Game_over" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Game_over.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -178,6 +181,18 @@
   <data name="MotoIzquierda" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\MotoIzquierda.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="MotoPoderAbajo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MotoPoderAbajo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MotoPoderArriba" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MotoPoderArriba.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MotoPoderDerecha" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MotoPoderDerecha.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MotoPoderIzquierda" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MotoPoderIzquierda.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="muerte" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\muerte.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -195,6 +210,9 @@
   </data>
   <data name="TRON_start_screen" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TRON_start_screen.jpeg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="VictoryBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\VictoryBackground.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="win" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\win.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

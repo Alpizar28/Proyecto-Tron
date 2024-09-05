@@ -15,7 +15,7 @@ namespace Proyecto2
         public int columnas { get; private set; }
         public int filas { get; private set; }
         public Timer movimientoTimer;
-        private Keys direccionActual = Keys.Up;
+        public Keys direccionActual = Keys.Up;
         public List<BOTS> bots;
         public FlowLayoutPanel panelPoderes;
         private ProgressBar progressBarCombustible;
@@ -34,7 +34,8 @@ namespace Proyecto2
             this.Size = new Size(columnas * 20 + 100, filas * 20 + 170);  // tamaño de la ventana del juego
             Image backgroundImage = Properties.Resources.futuristic_background;
             this.BackgroundImage = backgroundImage;
-            this.BackgroundImageLayout = ImageLayout.Stretch;  // Ajusta la imagen para que cubra todo el fondo
+            this.BackgroundImageLayout = ImageLayout.Stretch;  
+            this.StartPosition = FormStartPosition.CenterScreen;
 
             mapa = new MAPA(filas, columnas, 20, this);  // Crear el grid en esta ventana
             mapa.ColocarPoderesAleatorios(10);
@@ -54,11 +55,15 @@ namespace Proyecto2
 
             moto = new MOTO(150, 3, 300, new List<string>(), new List<string>(), posicionInicial, this);
 
-            moto.ConfigurarImagenes(
+            moto.ConfigurarImagenesConPoderes(
                 Properties.Resources.MotoDerecha,
                 Properties.Resources.MotoIzquierda,
                 Properties.Resources.MotoArriba,
-                Properties.Resources.MotoAbajo
+                Properties.Resources.MotoAbajo,
+                Properties.Resources.MotoPoderDerecha, // Imagen genérica con poder
+                Properties.Resources.MotoPoderIzquierda,
+                Properties.Resources.MotoPoderArriba,
+                Properties.Resources.MotoPoderAbajo
             );
 
             moto.ActualizarImagen(mapa, direccionActual);
@@ -99,18 +104,15 @@ namespace Proyecto2
                 Casilla posicionInicial = mapa.ObtenerCasilla(x, y);
 
                 BOTS bot = new BOTS(300, 3, 100, new List<string>(), new List<string>(), posicionInicial, this);
-                bot.ConfigurarImagenes(
-                    Properties.Resources.BotDerecha,
-                    Properties.Resources.BotIzquierda,
-                    Properties.Resources.BotArriba,
-                    Properties.Resources.BotAbajo
-                );
 
+                // No necesitas configurar imágenes en este punto, ya que se hará automáticamente cuando se muevan
                 bots.Add(bot);
                 Console.WriteLine($"Bot {i + 1} inicializado en posición ({x}, {y})");
+
+                // Actualizar la imagen inicial del bot
+                bot.ActualizarImagenBot(mapa, Keys.Right);  // Puedes asumir que todos los bots inician moviéndose a la derecha
             }
         }
-
         private void InicializarPanelPoderes()
         {
             panelPoderes = new FlowLayoutPanel
@@ -282,27 +284,42 @@ namespace Proyecto2
                 bot.DetenerBot();
             }
 
-            this.Close();
-
             Form pantallaFin = new Form
             {
-                Text = "FIN DEL JUEGO",
-                Size = new Size(400, 300),
-                StartPosition = FormStartPosition.CenterScreen
+                Text = "Fin del Juego",
+                Size = new Size(600, 400),
+                StartPosition = FormStartPosition.CenterScreen,
+                BackgroundImage = Properties.Resources.GameOverBackground, 
+                BackgroundImageLayout = ImageLayout.Stretch,
+                FormBorderStyle = FormBorderStyle.None 
             };
-
-            Label label = new Label
+            // Botón para jugar de nuevo
+            Button jugarOtraVezBtn = new Button
             {
-                Text = $"¡Fin del juego! Razón: {razonMuerte}",
-                Font = new Font("Arial", 24, FontStyle.Bold),
-                TextAlign = ContentAlignment.MiddleCenter,
-                Dock = DockStyle.Fill
+                Text = "Jugar de Nuevo",
+                Font = new Font("Arial", 16),
+                Size = new Size(200, 50),
+                BackColor = Color.Green,
+                ForeColor = Color.White,
+                Location = new Point(200, 250)
             };
 
-            pantallaFin.Controls.Add(label);
-            pantallaFin.ShowDialog();
+            Button salirBtn = new Button
+            {
+                Text = "Salir",
+                Font = new Font("Arial", 16),
+                Size = new Size(200, 50),
+                BackColor = Color.Red,
+                ForeColor = Color.White,
+                Location = new Point(200, 300) 
+            };
+            salirBtn.Click += (s, e) => Application.Exit();
+            jugarOtraVezBtn.Click += (s, e) => ReiniciarJuego();
 
-            pantallaFin.Dispose();
+            pantallaFin.Controls.Add(salirBtn);
+            pantallaFin.Controls.Add(jugarOtraVezBtn);
+
+            pantallaFin.ShowDialog();
         }
 
         private void MostrarPantallaVictoria()
@@ -310,56 +327,50 @@ namespace Proyecto2
             PlayMp3File("win");
             movimientoTimer.Stop();
 
-            if (this.InvokeRequired)
+            Form pantallaVictoria = new Form
             {
-                this.Invoke(new Action(() =>
-                {
-                    this.Close();
+                Text = "¡VICTORIA!",
+                Size = new Size(600, 400),
+                StartPosition = FormStartPosition.CenterScreen,
+                BackgroundImage = Properties.Resources.VictoryBackground, 
+                BackgroundImageLayout = ImageLayout.Stretch,
+                FormBorderStyle = FormBorderStyle.None // Sin bordes
+            };
 
-                    Form pantallaVictoria = new Form
-                    {
-                        Text = "¡VICTORIA!",
-                        Size = new Size(400, 300),
-                        StartPosition = FormStartPosition.CenterScreen
-                    };
-
-                    Label label = new Label
-                    {
-                        Text = "¡Felicidades! Has eliminado a todos los bots.",
-                        Font = new Font("Arial", 24, FontStyle.Bold),
-                        TextAlign = ContentAlignment.MiddleCenter,
-                        Dock = DockStyle.Fill
-                    };
-
-                    pantallaVictoria.Controls.Add(label);
-                    pantallaVictoria.ShowDialog();
-                    pantallaVictoria.Dispose();
-                }));
-            }
-            else
+            // Botón para jugar de nuevo
+            Button jugarOtraVezBtn = new Button
             {
-                this.Close();
+                Text = "Jugar de Nuevo",
+                Font = new Font("Arial", 16),
+                Size = new Size(200, 50),
+                BackColor = Color.Green,
+                ForeColor = Color.White,
+                Location = new Point(200, 250)
+            };
 
-                Form pantallaVictoria = new Form
-                {
-                    Text = "¡VICTORIA!",
-                    Size = new Size(400, 300),
-                    StartPosition = FormStartPosition.CenterScreen
-                };
+            // Botón para salir
+            Button Salir = new Button
+            {
+                Text = "Salir",
+                Font = new Font("Arial", 16),
+                Size = new Size(200, 50),
+                BackColor = Color.Green,
+                ForeColor = Color.White,
+                Location = new Point(200, 300) 
+            };
+            jugarOtraVezBtn.Click += (s, e) => ReiniciarJuego();
+            Salir.Click += (s, e) => Application.Exit();
 
-                Label label = new Label
-                {
-                    Text = "¡Felicidades! Has eliminado a todos los bots.",
-                    Font = new Font("Arial", 24, FontStyle.Bold),
-                    TextAlign = ContentAlignment.MiddleCenter,
-                    Dock = DockStyle.Fill
-                };
-
-                pantallaVictoria.Controls.Add(label);
-                pantallaVictoria.ShowDialog();
-                pantallaVictoria.Dispose();
-            }
+            pantallaVictoria.Controls.Add(jugarOtraVezBtn);
+            pantallaVictoria.Controls.Add(Salir);
+            pantallaVictoria.ShowDialog();
         }
+
+        private void ReiniciarJuego()
+        {
+            Application.Restart();
+        }
+
         private void GAME_Load(object sender, EventArgs e)
         {
         }

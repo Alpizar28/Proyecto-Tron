@@ -71,7 +71,10 @@ namespace Proyecto2
             PosicionActual.EsBot = true;
 
             ActualizarEstela(mapa);
-            ActualizarImagen(mapa, direccion);
+
+            // Aquí es donde se actualiza la imagen del bot
+            ActualizarImagenBot(mapa, direccion);
+
             if (mapa.EsEstela(PosicionActual))
             {
                 eliminado = true; // Marca el bot como eliminado
@@ -79,6 +82,23 @@ namespace Proyecto2
             }
         }
 
+        public void ActualizarImagenBot(MAPA mapa, Keys direccion)
+        {
+            Image imagenActual = ObtenerImagenBot(direccion);
+            mapa.ColocarImagenEnCelda(PosicionActual.X, PosicionActual.Y, imagenActual);
+        }
+
+        private Image ObtenerImagenBot(Keys direccionActual)
+        {
+            return direccionActual switch
+            {
+                Keys.Right => Properties.Resources.BotDerecha,
+                Keys.Left => Properties.Resources.BotIzquierda,
+                Keys.Up => Properties.Resources.BotArriba,
+                Keys.Down => Properties.Resources.BotAbajo,
+                _ => Properties.Resources.BotDerecha,
+            };
+        }
         private bool Mover_(Keys direccion, MAPA mapa, int columnas, int filas)
         {
             Casilla nuevaPosicion = ObtenerNuevaPosicion(direccion);

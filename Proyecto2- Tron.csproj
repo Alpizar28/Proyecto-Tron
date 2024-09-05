@@ -214,5 +214,23 @@
   <ItemGroup>
     <None Include="Resources\futuristic_background.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MotoPoderAbajo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MotoPoderArriba.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MotoPoderDerecha.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MotoPoderIzquierda.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\GameOverBackground.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\VictoryBackground.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

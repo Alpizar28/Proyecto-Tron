@@ -35,6 +35,7 @@ namespace Proyecto2
         {
             Console.WriteLine("Escudo activado para el jugador");
             moto.tieneEscudo = true;
+            moto.ActualizarImagen(moto.game.mapa, moto.game.direccionActual); // Actualizar la imagen de la moto con el escudo
 
             if (escudoTimer != null)
             {
@@ -47,9 +48,10 @@ namespace Proyecto2
             escudoTimer.Tick += (sender, e) =>
             {
                 moto.tieneEscudo = false;
+                moto.ActualizarImagen(moto.game.mapa, moto.game.direccionActual); // Volver a la imagen original
                 escudoTimer.Stop();
                 escudoTimer.Dispose();
-                Console.WriteLine("Escudo desactivado para el jugador");    
+                Console.WriteLine("Escudo desactivado para el jugador");
             };
             escudoTimer.Start();
         }
@@ -63,15 +65,19 @@ namespace Proyecto2
                 velocidadTimer.Dispose();
             }
 
-            moto.Velocidad = velocidadOriginal / 4; 
+            moto.Velocidad = velocidadOriginal / 4;
+            moto.enHiperVelocidad = true; // Indicamos que está en hiper velocidad
+            moto.ActualizarImagen(moto.game.mapa, moto.game.direccionActual); // Actualizar la imagen a la de hiper velocidad
             moto.game.ConfigurarTemporizador();
 
             velocidadTimer = new Timer();
-            velocidadTimer.Interval = 7500; 
+            velocidadTimer.Interval = 7500; // HiperVelocidad dura exactamente 7.5 segundos
             velocidadTimer.Tick += (sender, e) =>
             {
-                moto.Velocidad = velocidadOriginal; 
-                moto.game.ConfigurarTemporizador(); 
+                moto.Velocidad = velocidadOriginal;
+                moto.enHiperVelocidad = false; // Desactivamos hiper velocidad
+                moto.ActualizarImagen(moto.game.mapa, moto.game.direccionActual); // Volver a la imagen original
+                moto.game.ConfigurarTemporizador();
                 velocidadTimer.Stop();
                 velocidadTimer.Dispose();
             };

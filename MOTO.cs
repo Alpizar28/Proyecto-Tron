@@ -15,6 +15,8 @@ namespace Proyecto2
         public int Tamaño_Estela { get; set; }
         public int Combustible { get; set; }
         public int CombustibleMaximo { get; private set; } = 300;
+        public bool enHiperVelocidad { get; set; }
+
         public Queue<ITEM> ColaItems { get; private set; }
 
         private System.Timers.Timer itemTimer; // Especifica System.Timers.Timer
@@ -26,6 +28,10 @@ namespace Proyecto2
         private Image motoImageIzquierda;
         private Image motoImageArriba;
         private Image motoImageAbajo;
+        private Image motoPoderDerecha;
+        private Image motoPoderIzquierda;
+        private Image motoPoderArriba;
+        private Image motoPoderAbajo;
 
         public bool tieneEscudo { get; set; }
         public PODERES Poderes { get; private set; }
@@ -49,13 +55,23 @@ namespace Proyecto2
             itemTimer.Start();
         }
 
-        public void ConfigurarImagenes(Image derecha, Image izquierda, Image arriba, Image abajo)
+        public void ConfigurarImagenesConPoderes(
+            Image derecha, Image izquierda, Image arriba, Image abajo,
+            Image poderDerecha, Image poderIzquierda, Image poderArriba, Image poderAbajo)
         {
+            // Imágenes normales
             motoImageDerecha = derecha;
             motoImageIzquierda = izquierda;
             motoImageArriba = arriba;
             motoImageAbajo = abajo;
+
+            // Imágenes con poder (escudo o hiper velocidad)
+            motoPoderDerecha = poderDerecha;
+            motoPoderIzquierda = poderIzquierda;
+            motoPoderArriba = poderArriba;
+            motoPoderAbajo = poderAbajo;
         }
+
 
         public virtual void Mover(Keys direccion, MAPA mapa, int columnas, int filas)
         {
@@ -146,14 +162,28 @@ namespace Proyecto2
 
         public Image ObtenerImagenActual(Keys direccionActual)
         {
-            return direccionActual switch
+            if (tieneEscudo || enHiperVelocidad) 
             {
-                Keys.Right => motoImageDerecha,
-                Keys.Left => motoImageIzquierda,
-                Keys.Up => motoImageArriba,
-                Keys.Down => motoImageAbajo,
-                _ => motoImageDerecha,
-            };
+                return direccionActual switch
+                {
+                    Keys.Right => motoPoderDerecha,
+                    Keys.Left => motoPoderIzquierda,
+                    Keys.Up => motoPoderArriba,
+                    Keys.Down => motoPoderAbajo,
+                    _ => motoPoderDerecha,
+                };
+            }
+            else
+            {
+                return direccionActual switch
+                {
+                    Keys.Right => motoImageDerecha,
+                    Keys.Left => motoImageIzquierda,
+                    Keys.Up => motoImageArriba,
+                    Keys.Down => motoImageAbajo,
+                    _ => motoImageDerecha,
+                };
+            }
         }
 
         public bool EsPosicionValida(Casilla nuevaPosicion, int columnas, int filas)
