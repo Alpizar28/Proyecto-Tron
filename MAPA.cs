@@ -11,7 +11,7 @@ namespace Proyecto2
         private readonly int columnas;
         private readonly int cellSize;
         private Panel[,] gridPanels;  // Matriz de Paneles que representarán el grid
-        public Grid Grid { get; private set; } // Mapa lógico de casillas
+        public Grid Grid { get; private set; } // Mapa de casillas
 
         public MAPA(int filas, int columnas, int cellSize, Control parentControl)
         {
@@ -23,12 +23,10 @@ namespace Proyecto2
 
         private void CrearGrid(Control parentControl)
         {
-            // Inicializar el grid lógico
             Grid = new Grid(filas, columnas);
 
-            // Calcular las coordenadas iniciales para centrar el grid
             int startX = (parentControl.ClientSize.Width - columnas * cellSize) / 2;
-            int startY = 55;  // Aplica el margen superior
+            int startY = 55;
 
             // Inicializar la matriz de Paneles
             gridPanels = new Panel[filas, columnas];
@@ -51,7 +49,7 @@ namespace Proyecto2
                 Location = new Point(startX + columna * cellSize, startY + fila * cellSize),
                 BorderStyle = BorderStyle.FixedSingle,
                 BackColor = Color.MediumPurple,
-                BackgroundImageLayout = ImageLayout.Stretch  // Asegura que la imagen se ajuste al tamaño del panel
+                BackgroundImageLayout = ImageLayout.Stretch 
             };
             return panel;
         }
@@ -62,7 +60,7 @@ namespace Proyecto2
             {
                 Panel panel = gridPanels[y, x];
                 panel.BackColor = color;
-                panel.BackgroundImage = null;  // Restablecer la imagen para que se vea solo el color
+                panel.BackgroundImage = null;  
 
                 // Marcar la casilla como parte de una estela si es de un color específico
                 Casilla casilla = Grid.ObtenerCasilla(x, y);
@@ -83,7 +81,7 @@ namespace Proyecto2
             {
                 Panel panel = gridPanels[y, x];
                 panel.BackgroundImage = imagen;
-                panel.Invalidate();  // Forzar la actualización del panel
+                panel.Invalidate();  //actualización del panel
             }
         }
         public async Task ColocarPoderesAleatorios(int cantidadPoderes)
@@ -95,61 +93,79 @@ namespace Proyecto2
                 int x = random.Next(0, columnas);
                 int y = random.Next(0, filas);
 
-                Image imagenPoder;
-                string tipoPoder = (random.Next(0, 2) == 0) ? "Escudo" : "HiperVelocidad";
+                Casilla casilla = Grid.ObtenerCasilla(x, y);
 
-                if (tipoPoder == "Escudo")
+                if (casilla.TipoPoder == null && casilla.TipoItem == null && casilla.EsParteDeEstela == false && casilla.EsBot == false)
                 {
-                    imagenPoder = Properties.Resources.Escudo;
+                    string tipoPoder = (random.Next(0, 2) == 0) ? "Escudo" : "HiperVelocidad";
+                    Image imagenPoder = tipoPoder == "Escudo" ? Properties.Resources.Escudo : Properties.Resources.HiperVelocidad;
+
+                    ColocarImagenEnCelda(x, y, imagenPoder);
+                    casilla.TipoPoder = tipoPoder;
+                    Console.WriteLine(tipoPoder);
                 }
                 else
                 {
-                    imagenPoder = Properties.Resources.HiperVelocidad;
+                    i--; 
                 }
 
-                ColocarImagenEnCelda(x, y, imagenPoder);
-
-                Grid.ObtenerCasilla(x, y).TipoPoder = tipoPoder;
-                Console.WriteLine(tipoPoder);
-                // Esperar 30 segundos antes de colocar el siguiente poder
-                await Task.Delay(10000);
+                await Task.Delay(8000); // 8 segundos de espera
             }
         }
+
 
         public async Task ColocarItemsAleatorios(int cantidadItems)
         {
             Random random = new Random();
+
             for (int i = 0; i < cantidadItems; i++)
             {
                 int x = random.Next(0, columnas);
                 int y = random.Next(0, filas);
 
-                Image imagenItem;
-                int randomValue = random.Next(0, 3);
-                string tipoItem = randomValue == 0 ? "Combustible" : randomValue == 1 ? "Estela" : "Bomba";
+                Casilla casilla = Grid.ObtenerCasilla(x, y);
 
-                if (tipoItem == "Combustible")
+                if (casilla.TipoPoder == null && casilla.TipoItem == null && casilla.EsParteDeEstela == false && casilla.EsBot == false)
                 {
-                    imagenItem = Properties.Resources.Combustible;
-                }
-                else if (tipoItem == "Estela")
-                {
-                    imagenItem = Properties.Resources.Poderes;
+                    string tipoItem = ObtenerTipoItem(random.Next(0, 3));
+                    Image imagenItem = ObtenerImagenPorTipo(tipoItem);
+
+                    ColocarImagenEnCelda(x, y, imagenItem);
+                    casilla.TipoItem = tipoItem;
+
+                    Console.WriteLine(tipoItem);
                 }
                 else
                 {
-                    imagenItem = Properties.Resources.Bomba;
+                    i--; 
                 }
 
-
-                ColocarImagenEnCelda(x, y, imagenItem);
-
-                Grid.ObtenerCasilla(x, y).TipoItem = tipoItem;
-                Console.WriteLine(tipoItem);
-                await Task.Delay(10000); // 30000 milisegundos = 30 segundos
-
+                await Task.Delay(8000); // 8 segundos de espera
             }
         }
+
+
+        private string ObtenerTipoItem(int randomValue)
+        {
+            return randomValue switch
+            {
+                0 => "Combustible",
+                1 => "Estela",
+                _ => "Bomba"
+            };
+        }
+
+        private Image ObtenerImagenPorTipo(string tipoItem)
+        {
+            return tipoItem switch
+            {
+                "Combustible" => Properties.Resources.Combustible,
+                "Estela" => Properties.Resources.Poderes,
+                "Bomba" => Properties.Resources.Bomba,
+                _ => throw new ArgumentException("Tipo de item desconocido")
+            };
+        }
+
 
 
         public Casilla ObtenerCasilla(int x, int y)
@@ -182,8 +198,8 @@ namespace Proyecto2
         public Casilla Izquierda { get; set; }
         public Casilla Derecha { get; set; }
 
-        public int X { get; set; } // Posición X (columna) en el grid
-        public int Y { get; set; } // Posición Y (fila) en el grid
+        public int X { get; set; } 
+        public int Y { get; set; }
 
         public bool EsParteDeEstela { get; set; } = false;
         public string TipoPoder { get; set; }
@@ -207,7 +223,6 @@ namespace Proyecto2
 
             Casilla[,] grid = new Casilla[filas, columnas];
 
-            // Crear el grid con las posiciones correspondientes
             for (int i = 0; i < filas; i++)
             {
                 for (int j = 0; j < columnas; j++)
@@ -249,7 +264,6 @@ namespace Proyecto2
                 }
             }
 
-            // Establecer la primera casilla como la posición inicial
             PrimerCasilla = grid[0, 0];
         }
 

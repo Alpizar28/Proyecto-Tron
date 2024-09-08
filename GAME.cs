@@ -60,7 +60,7 @@ namespace Proyecto2
                 Properties.Resources.MotoIzquierda,
                 Properties.Resources.MotoArriba,
                 Properties.Resources.MotoAbajo,
-                Properties.Resources.MotoPoderDerecha, // Imagen genérica con poder
+                Properties.Resources.MotoPoderDerecha,
                 Properties.Resources.MotoPoderIzquierda,
                 Properties.Resources.MotoPoderArriba,
                 Properties.Resources.MotoPoderAbajo
@@ -79,7 +79,7 @@ namespace Proyecto2
 
             movimientoTimer = new Timer
             {
-                Interval = moto.Velocidad // Intervalo en milisegundos
+                Interval = moto.Velocidad 
             };
             movimientoTimer.Tick += MoverMoto;
             movimientoTimer.Start();
@@ -105,20 +105,18 @@ namespace Proyecto2
 
                 BOTS bot = new BOTS(300, 3, 100, new List<string>(), new List<string>(), posicionInicial, this);
 
-                // No necesitas configurar imágenes en este punto, ya que se hará automáticamente cuando se muevan
                 bots.Add(bot);
                 Console.WriteLine($"Bot {i + 1} inicializado en posición ({x}, {y})");
 
-                // Actualizar la imagen inicial del bot
-                bot.ActualizarImagenBot(mapa, Keys.Right);  // Puedes asumir que todos los bots inician moviéndose a la derecha
+                bot.ActualizarImagenBot(mapa, Keys.Right); 
             }
         }
         private void InicializarPanelPoderes()
         {
             panelPoderes = new FlowLayoutPanel
             {
-                Size = new Size(300, 60),  // Tamaño del panel
-                AutoScroll = true,         // Activar scroll si hay muchos poderes
+                Size = new Size(300, 60),  
+                AutoScroll = true,        
                 FlowDirection = FlowDirection.LeftToRight
             };
 
@@ -173,8 +171,6 @@ namespace Proyecto2
             }
         }
 
-
-
         public void MostrarCombustible()
         {
             pictureBoxCombustible = new PictureBox
@@ -207,11 +203,11 @@ namespace Proyecto2
         {
             if (bot == null || !bots.Contains(bot))
             {
-                return; // Evita eliminar el mismo bot más de una vez
+                return; 
             }
 
-            bot.SoltarItemsYPoderes(); // Suelta los ítems y poderes del bot
-            bot.DetenerBot(); // Detiene el movimiento del bot
+            bot.SoltarItemsYPoderes(); 
+            bot.DetenerBot(); 
 
             bot.Estela.LimpiarEstela(mapa);
 
@@ -252,12 +248,12 @@ namespace Proyecto2
 
             if (keyData == Keys.D1)
             {
-                moto.Poderes.MoverPoderArriba();
+                moto.Poderes.MoverPoder("Arriba");
                 return true;
             }
             else if (keyData == Keys.D2)
             {
-                moto.Poderes.MoverPoderAbajo();
+                moto.Poderes.MoverPoder("Abajo");
                 return true;
             }
             else if (keyData == Keys.Enter)
@@ -284,16 +280,18 @@ namespace Proyecto2
                 bot.DetenerBot();
             }
 
+            this.Hide();  
+
             Form pantallaFin = new Form
             {
                 Text = "Fin del Juego",
                 Size = new Size(600, 400),
                 StartPosition = FormStartPosition.CenterScreen,
-                BackgroundImage = Properties.Resources.GameOverBackground, 
+                BackgroundImage = Properties.Resources.GameOverBackground,
                 BackgroundImageLayout = ImageLayout.Stretch,
-                FormBorderStyle = FormBorderStyle.None 
+                FormBorderStyle = FormBorderStyle.None
             };
-            // Botón para jugar de nuevo
+
             Button jugarOtraVezBtn = new Button
             {
                 Text = "Jugar de Nuevo",
@@ -311,8 +309,9 @@ namespace Proyecto2
                 Size = new Size(200, 50),
                 BackColor = Color.Red,
                 ForeColor = Color.White,
-                Location = new Point(200, 300) 
+                Location = new Point(200, 300)
             };
+
             salirBtn.Click += (s, e) => Application.Exit();
             jugarOtraVezBtn.Click += (s, e) => ReiniciarJuego();
 
@@ -320,24 +319,28 @@ namespace Proyecto2
             pantallaFin.Controls.Add(jugarOtraVezBtn);
 
             pantallaFin.ShowDialog();
+
+            this.Close();
         }
+
 
         private void MostrarPantallaVictoria()
         {
             PlayMp3File("win");
             movimientoTimer.Stop();
 
+            this.Hide();  
+
             Form pantallaVictoria = new Form
             {
                 Text = "¡VICTORIA!",
                 Size = new Size(600, 400),
                 StartPosition = FormStartPosition.CenterScreen,
-                BackgroundImage = Properties.Resources.VictoryBackground, 
+                BackgroundImage = Properties.Resources.VictoryBackground,
                 BackgroundImageLayout = ImageLayout.Stretch,
-                FormBorderStyle = FormBorderStyle.None // Sin bordes
+                FormBorderStyle = FormBorderStyle.None
             };
 
-            // Botón para jugar de nuevo
             Button jugarOtraVezBtn = new Button
             {
                 Text = "Jugar de Nuevo",
@@ -348,7 +351,6 @@ namespace Proyecto2
                 Location = new Point(200, 250)
             };
 
-            // Botón para salir
             Button Salir = new Button
             {
                 Text = "Salir",
@@ -356,15 +358,20 @@ namespace Proyecto2
                 Size = new Size(200, 50),
                 BackColor = Color.Green,
                 ForeColor = Color.White,
-                Location = new Point(200, 300) 
+                Location = new Point(200, 300)
             };
+
             jugarOtraVezBtn.Click += (s, e) => ReiniciarJuego();
             Salir.Click += (s, e) => Application.Exit();
 
             pantallaVictoria.Controls.Add(jugarOtraVezBtn);
             pantallaVictoria.Controls.Add(Salir);
+
             pantallaVictoria.ShowDialog();
+
+            this.Close(); 
         }
+
 
         private void ReiniciarJuego()
         {

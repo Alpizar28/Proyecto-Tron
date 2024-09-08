@@ -15,10 +15,8 @@ public class Estela
 
     public void AgregarNodo(int x, int y, MAPA mapa)
     {
-        // Agrega un nuevo nodo al final de la lista (la nueva posición)
         posiciones.AddLast((x, y));
 
-        // Si la longitud de la estela supera la longitud máxima, elimina el primer nodo
         if (posiciones.Count > MaxLongitud)
         {
             var nodoEliminado = posiciones.First.Value;
@@ -41,17 +39,16 @@ public class Estela
 
     public void LimpiarEstela(MAPA mapa)
     {
-        // Limpiar todas las posiciones de la estela
         foreach (var (X, Y) in posiciones)
         {
-            mapa.ColocarImagenEnCelda(X, Y, null); // Eliminar la imagen de la estela
-            mapa.ColorearCelda(X, Y, Color.MediumPurple); // Restaurar color original
+            mapa.ColocarImagenEnCelda(X, Y, null);
+            mapa.ColorearCelda(X, Y, Color.MediumPurple); 
             Casilla casilla = mapa.ObtenerCasilla(X, Y);
-            casilla.EsParteDeEstela = false;  // Desmarcar como estela
-            casilla.EsBot = false;  // Asegurar que no esté marcado como bot
+            casilla.EsParteDeEstela = false;
+            casilla.EsBot = false; 
         }
 
-        posiciones.Clear();  // Limpiar la lista de posiciones de la estela
+        posiciones.Clear(); 
     }
 
 

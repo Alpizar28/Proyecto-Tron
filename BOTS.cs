@@ -37,19 +37,16 @@ namespace Proyecto2
             botTimer.Start();
         }
 
-
-
         public void MoverBot(object sender, EventArgs e)
         {
             if (eliminado)
-                return; // Evita mover el bot si ya ha sido eliminado
+                return; 
 
             MAPA mapa = game.mapa;
             int columnas = game.columnas;
             int filas = game.filas;
             MOTO jugador = game.moto;
 
-            // Desmarcar la casilla anterior como "EsBot"
             PosicionActual.EsBot = false;
 
             Keys direccion = ObtenerMejorDireccion(jugador, mapa, columnas, filas);
@@ -72,13 +69,12 @@ namespace Proyecto2
 
             ActualizarEstela(mapa);
 
-            // Aquí es donde se actualiza la imagen del bot
-            ActualizarImagenBot(mapa, direccion);
+            ActualizarImagenBot(mapa, direccion); 
 
             if (mapa.EsEstela(PosicionActual))
             {
-                eliminado = true; // Marca el bot como eliminado
-                game.MatarBot(this);  // Eliminar el bot si choca con una estela
+                eliminado = true; 
+                game.MatarBot(this);
             }
         }
 
@@ -128,7 +124,6 @@ namespace Proyecto2
                 ITEM nuevoItem = new ITEM(nuevaPosicion.TipoItem);
                 nuevoItem.Aplicar(this);
 
-                // Limpiar la casilla después de aplicar el ítem
                 mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
                 nuevaPosicion.TipoItem = null;
             }
@@ -202,14 +197,28 @@ namespace Proyecto2
             // Elige la dirección que acerque al jugador
             if (Math.Abs(deltaX) > Math.Abs(deltaY))
             {
-                mejorDireccion = deltaX > 0 ? Keys.Right : Keys.Left;
+                if (deltaX > 0)
+                {
+                    mejorDireccion = Keys.Right;
+                }
+                else
+                {
+                    mejorDireccion = Keys.Left;
+                }
             }
             else
             {
-                mejorDireccion = deltaY > 0 ? Keys.Down : Keys.Up;
+                if (deltaY > 0)
+                {
+                    mejorDireccion = Keys.Down;
+                }
+                else
+                {
+                    mejorDireccion = Keys.Up;
+                }
             }
 
-            // Verifica si la dirección es válida (dentro del mapa y no es estela)
+
             Casilla nuevaPosicion = ObtenerNuevaPosicion(mejorDireccion);
             if (EsPosicionValida(nuevaPosicion, columnas, filas) && !mapa.EsEstela(nuevaPosicion))
             {

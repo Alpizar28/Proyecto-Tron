@@ -21,7 +21,7 @@ namespace Proyecto2
             this.MaximizeBox = false;
             this.MinimizeBox = false;
 
-            this.BackgroundImage = Properties.Resources.Start_screen;
+            this.BackgroundImage = Properties.Resources.fondo2;
             this.BackgroundImageLayout = ImageLayout.Zoom;
 
             button1.Font = new Font("Arial", 24, FontStyle.Bold);
@@ -29,7 +29,7 @@ namespace Proyecto2
             button1.ForeColor = Color.White;
             button1.FlatStyle = FlatStyle.Flat;
             button1.Size = new Size(200, 70);
-            button1.Location = new Point((this.Width / 2) - 100, (this.Height / 2) - 35);
+            button1.Location = new Point((this.Width / 2) - 60, (this.Height / 2) - 35);
             button1.Click += button1_Click;
         }
 

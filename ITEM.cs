@@ -50,7 +50,7 @@ namespace Proyecto2
                 int incremento = Math.Min(Valor, moto.CombustibleMaximo - moto.Combustible);
                 if (incremento < 0)
                 {
-                    incremento = 0; // Asegúrate de que el incremento no sea negativo
+                    incremento = 0; 
                 }
                 moto.Combustible += incremento;
                 moto.game.ActualizarCombustible();
@@ -66,13 +66,11 @@ namespace Proyecto2
         private void AplicarCrecimientoEstela(MOTO moto)
         {
             moto.Tamaño_Estela += Valor;
-            moto.Estela.IncrementarMaxLongitud(Valor); // Incrementa la longitud máxima permitida de la estela
-            Console.WriteLine($"Crecimiento de estela aplicado: {Valor} unidades. Tamaño de estela actual: {moto.Tamaño_Estela}");
+            moto.Estela.IncrementarMaxLongitud(Valor);
         }
 
         private void AplicarBomba(MOTO moto)
         {
-            Console.WriteLine("¡Bomba recogida! La moto explota.");
             moto.Explotar();
         }
     }

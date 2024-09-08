@@ -19,7 +19,7 @@ namespace Proyecto2
 
         public Queue<ITEM> ColaItems { get; private set; }
 
-        private System.Timers.Timer itemTimer; // Especifica System.Timers.Timer
+        private System.Timers.Timer itemTimer;
         public List<string> Items { get; set; }
         public Stack<string> PoderesStack { get; set; }
         public Casilla PosicionActual { get; protected set; }
@@ -59,13 +59,11 @@ namespace Proyecto2
             Image derecha, Image izquierda, Image arriba, Image abajo,
             Image poderDerecha, Image poderIzquierda, Image poderArriba, Image poderAbajo)
         {
-            // Imágenes normales
             motoImageDerecha = derecha;
             motoImageIzquierda = izquierda;
             motoImageArriba = arriba;
             motoImageAbajo = abajo;
 
-            // Imágenes con poder (escudo o hiper velocidad)
             motoPoderDerecha = poderDerecha;
             motoPoderIzquierda = poderIzquierda;
             motoPoderArriba = poderArriba;
@@ -89,7 +87,7 @@ namespace Proyecto2
                 return;
             }
 
-            if (nuevaPosicion.EsBomba)  // Verificar si la nueva posición tiene una bomba
+            if (nuevaPosicion.EsBomba) 
             {
                 game.FinalizarJuego("Has explotado con una bomba");
                 return;
@@ -115,15 +113,6 @@ namespace Proyecto2
             PosicionActual.EsParteDeEstela = true;
         }
 
-        private void ManejarItemsEncontrados(Casilla nuevaPosicion, MAPA mapa)
-        {
-            ITEM item = new ITEM(nuevaPosicion.TipoItem); // Crear el ítem basado en el tipo encontrado
-            ColaItems.Enqueue(item); // Agregar el ítem a la cola de ítems
-
-            mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
-            nuevaPosicion.TipoItem = null;
-        }
-
         private void ManejarColision()
         {
             if (!tieneEscudo)
@@ -131,6 +120,30 @@ namespace Proyecto2
                 game.FinalizarJuego("Has muerto");
             }
         }
+
+        private void ManejarItemsEncontrados(Casilla nuevaPosicion, MAPA mapa)
+        {
+            ITEM item = new ITEM(nuevaPosicion.TipoItem);
+
+            switch (item.Tipo)
+            {
+                case "Combustible":
+                    item.Aplicar(this);
+                    break;
+
+                case "Estela":
+                    item.Aplicar(this);
+                    break;
+
+                case "Bomba":
+                    item.Aplicar(this);
+                    break;
+            }
+
+            mapa.ColocarImagenEnCelda(nuevaPosicion.X, nuevaPosicion.Y, null);
+            nuevaPosicion.TipoItem = null;
+        }
+
 
         public void ManejarPoderEncontrado(Casilla nuevaPosicion, MAPA mapa)
         {
@@ -228,7 +241,7 @@ namespace Proyecto2
                 if (siguienteItem.Tipo == "Combustible" && Combustible >= CombustibleMaximo)
                 {
                     Console.WriteLine("Combustible lleno, celda de combustible no aplicada.");
-                    return; // Evita reinsertar y no aplicar el ítem si el combustible ya está lleno
+                    return;
                 }
 
                 siguienteItem.Aplicar(this);

@@ -66,9 +66,15 @@ namespace Proyecto2
             }
 
             int newInterval = velocidadOriginal / 4;
-            bot.Velocidad = newInterval > 0 ? newInterval : 1;
+            if (newInterval > 0)
+            {
+                bot.Velocidad = newInterval;
+            }
+            else
+            {
+                bot.Velocidad = 1;
+            }
 
-            Console.WriteLine($"Nueva velocidad del bot (intervalo): {bot.Velocidad}");
 
             bot.ConfigurarTemporizador();
 
@@ -79,7 +85,6 @@ namespace Proyecto2
             velocidadTimer.Tick += (sender, e) =>
             {
                 bot.Velocidad = velocidadOriginal; 
-                Console.WriteLine("Velocidad restaurada al valor original.");
                 bot.ConfigurarTemporizador(); // Reconfigura el timer con la velocidad original
                 velocidadTimer.Stop();
                 velocidadTimer.Dispose();

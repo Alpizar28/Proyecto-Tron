@@ -66,16 +66,16 @@ namespace Proyecto2
             }
 
             moto.Velocidad = velocidadOriginal / 4;
-            moto.enHiperVelocidad = true; // Indicamos que está en hiper velocidad
-            moto.ActualizarImagen(moto.game.mapa, moto.game.direccionActual); // Actualizar la imagen a la de hiper velocidad
+            moto.enHiperVelocidad = true; 
+            moto.ActualizarImagen(moto.game.mapa, moto.game.direccionActual); 
             moto.game.ConfigurarTemporizador();
 
             velocidadTimer = new Timer();
-            velocidadTimer.Interval = 7500; // HiperVelocidad dura exactamente 7.5 segundos
+            velocidadTimer.Interval = 7500; // HiperVelocidad dura  7.5 segundos
             velocidadTimer.Tick += (sender, e) =>
             {
                 moto.Velocidad = velocidadOriginal;
-                moto.enHiperVelocidad = false; // Desactivamos hiper velocidad
+                moto.enHiperVelocidad = false;
                 moto.ActualizarImagen(moto.game.mapa, moto.game.direccionActual); // Volver a la imagen original
                 moto.game.ConfigurarTemporizador();
                 velocidadTimer.Stop();
@@ -92,56 +92,57 @@ namespace Proyecto2
             {
                 PictureBox pictureBoxPoder = new PictureBox
                 {
-                    Size = new Size(50, 50),  // Tamaño de la imagen del poder
+                    Size = new Size(50, 50), 
                     SizeMode = PictureBoxSizeMode.StretchImage,
-                    Image = ObtenerImagenPoder(poder),  // Obtener la imagen correspondiente al poder
+                    Image = ObtenerImagenPoder(poder),  
                     BorderStyle = BorderStyle.FixedSingle
                 };
 
-                // Agregar el control visual al panel
                 moto.game.panelPoderes.Controls.Add(pictureBoxPoder);
             }
         }
 
-        // Método para obtener la imagen del poder
         private Image ObtenerImagenPoder(string poder)
         {
             if (poder == "Escudo")
             {
-                return Properties.Resources.EscudoMuerto;  // Asume que tienes una imagen llamada EscudoIcon en los recursos
+                return Properties.Resources.EscudoMuerto;
             }
             else if (poder == "HiperVelocidad")
             {
-                return Properties.Resources.HiperVelocidad;  // Asume que tienes una imagen llamada HiperVelocidadIcon en los recursos
+                return Properties.Resources.HiperVelocidad; 
             }
-            return null;  // Imagen por defecto en caso de que el poder no tenga una imagen asociada
+            return null;  
         }
 
-
-        public void MoverPoderArriba()
-        {
-            if (moto.PoderesStack.Count > 1)
-            {
-                var poder = moto.PoderesStack.Pop();
-                moto.PoderesStack = new Stack<string>(new[] { poder }.Concat(moto.PoderesStack));
-                ActualizarListaPoderes();
-            }
-        }
-
-        public void MoverPoderAbajo()
+        public void MoverPoder(string direccion)
         {
             if (moto.PoderesStack.Count > 1)
             {
                 var poderes = moto.PoderesStack.ToArray();
                 moto.PoderesStack.Clear();
-                moto.PoderesStack.Push(poderes[poderes.Length - 1]);
-                for (int i = 0; i < poderes.Length - 1; i++)
+
+                if (direccion == "Arriba")
                 {
-                    moto.PoderesStack.Push(poderes[i]);
+                    moto.PoderesStack.Push(poderes[0]);
+                    for (int i = 1; i < poderes.Length; i++)
+                    {
+                        moto.PoderesStack.Push(poderes[i]);
+                    }
                 }
+                else if (direccion == "Abajo")
+                {
+                    moto.PoderesStack.Push(poderes[poderes.Length - 1]);
+                    for (int i = 0; i < poderes.Length - 1; i++)
+                    {
+                        moto.PoderesStack.Push(poderes[i]);
+                    }
+                }
+
                 ActualizarListaPoderes();
             }
         }
+
 
         public void AplicarPoder()
         {
